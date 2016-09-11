@@ -1,0 +1,19 @@
+<form-template>
+	<fields>
+		<field subtype="text" type="text" name="text-1464025409691" label="Text Field" class="form-control text-input"></field>
+		<field type="radio-group" name="radio-group-1464025413848" label="Radio Group" class="radio-group">
+			<option value="option-1">Option 1</option>
+			<option value="option-2">Option 2</option>
+		</field>
+		<field subtype="h1" type="header" label="Hi, dear" class="header"></field>
+		<field type="select" name="select-1464025457822" label="Select" class="form-control select">
+			<option value="option-1">Option 1</option>
+			<option value="option-2">Option 2</option>
+		</field>
+		<field type="radio-group" name="radio-group-1466904031082" label="Lil" class="radio-group">
+			<option value="option-1">Option 1</option>
+			<option value="option-2">Option 2</option>
+		</field>
+		<field subtype="button" type="button" name="button-1464025423195" label="Save" class="btn btn-warning button-input"></field>
+	</fields>
+</form-template>
