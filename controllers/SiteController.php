@@ -88,4 +88,22 @@ class SiteController extends Controller
             'nodes' => Person::getChilds(Yii::$app->user->getIdentity())
         ]);
     }
+
+    public function actionUserProfile()
+    {
+
+          $personId = Yii::$app->request->get('id');
+          $person = new Person($personId);
+
+            if ($person->proposal->data) {
+                return $this->render('profile', [
+                    'data' => Json::decode($person->proposal->data)
+                ]);
+            } else {
+                throw new HttpNotFoundException();
+            }
+
+    }
+
+
 }

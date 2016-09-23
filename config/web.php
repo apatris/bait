@@ -49,6 +49,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 '<action:(invited-tree)>' => 'site/<action>',
+                '<action:(user-profile)>/<id:\w+>' => 'site/<action>',
                 '<controller:(proposals)>/<action:(send|successfully)>/<hash>' => '<controller>/<action>',
                 '<controller:(proposals)>/<action:(delete|activate)>/<id>' => '<controller>/<action>',
             ],
