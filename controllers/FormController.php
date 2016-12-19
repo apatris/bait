@@ -11,6 +11,10 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 
+/**
+ * Class FormController
+ * @package app\controllers
+ */
 class FormController extends Controller
 {
     public function actions()
@@ -38,22 +42,29 @@ class FormController extends Controller
         ];
     }
 
+    /**
+     * @return string
+     */
     public function actionIndex()
     {
         return $this->render('index', [
             'xml' => file_get_contents('../files/xml/form.xml')
         ]);
     }
-    
+
+    /**
+     * @return string
+     */
     public function actionView()
     {
-        $this->layout = 'proposal';
-
         return $this->render('view', [
             'xml' => file_get_contents('../files/xml/form.xml')
         ]);
     }
 
+    /**
+     * @return array|bool
+     */
     public function actionSave()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;

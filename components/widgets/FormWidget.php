@@ -23,6 +23,7 @@ class FormWidget extends Widget
         if (empty($this->settings)) {
             $this->settings['action'] = '/';
             $this->settings['method'] = 'POST';
+            $this->settings['class'] = 'login-form';
         }
     }
 
@@ -33,7 +34,7 @@ class FormWidget extends Widget
         $form = simplexml_load_file('../files/xml/form.xml');
         
         if(!empty($form)){
-            $html .= '<form action="' . $this->settings['action'] . '" method="' . $this->settings['method'] . '">';
+            $html .= '<form action="' . $this->settings['action'] . '" class="' . $this->settings['class'] . '" method="' . $this->settings['method'] . '">';
 
             $html .= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken);
             

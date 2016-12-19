@@ -4,10 +4,8 @@
 /* @var $content string */
 
 use app\components\widgets\LanguageSwitcher;
-use conquer\slimscroll\SlimscrollWidget;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
