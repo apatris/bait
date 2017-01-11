@@ -18,6 +18,8 @@ class FormWidget extends Widget
         
         if (empty($this->xml)) {
             $this->xml = simplexml_load_file('../files/xml/form.xml');
+        } else {
+            $this->xml = simplexml_load_string($this->xml);
         }
         
         if (empty($this->settings['action'])) {
