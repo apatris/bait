@@ -17,12 +17,18 @@ class FormWidget extends Widget
         parent::init();
         
         if (empty($this->xml)) {
-            $this->xml = 'Hello World';
+            $this->xml = simplexml_load_file('../files/xml/form.xml');
         }
         
-        if (empty($this->settings)) {
+        if (empty($this->settings['action'])) {
             $this->settings['action'] = '/';
+        }
+
+        if (empty($this->settings['method'])) {
             $this->settings['method'] = 'POST';
+        }
+
+        if (empty($this->settings['class'])) {
             $this->settings['class'] = 'login-form';
         }
     }
@@ -30,15 +36,13 @@ class FormWidget extends Widget
     public function run()
     {
         $html = '';
-
-        $form = simplexml_load_file('../files/xml/form.xml');
         
-        if(!empty($form)){
+        if(!empty($this->xml)){
             $html .= '<form action="' . $this->settings['action'] . '" class="' . $this->settings['class'] . '" method="' . $this->settings['method'] . '">';
 
             $html .= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken);
             
-            foreach ($form->fields->field as $field){
+            foreach ($this->xml->fields->field as $field){
                 $html .= $this->generateField($field);
             }
 

@@ -18,7 +18,7 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        '/css/curo-theme.css',
+        '/css/curo-theme.css?1',
         'http://demo.ztapps.com/curo/v1.1/assets/css/animate/animate.css',
     ];
     public $js = [
