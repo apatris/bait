@@ -31,11 +31,17 @@ class FormController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'save'],
+                'only' => ['index', 'save', 'view'],
                 'rules' => [
                     [
                         'allow' => true,
+                        'actions' => ['index', 'save'],
                         'roles' => ['changeForms']
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'save', 'view'],
+                        'roles' => ['@']
                     ],
                 ]
             ]

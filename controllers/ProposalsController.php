@@ -108,7 +108,7 @@ class ProposalsController extends Controller
                 $proposal->data = Json::encode($post);
 
                 if($proposal->save()){
-                    return $this->redirect('successfully/'.$inviteHash);
+                    return $this->redirect('successfully/' . $inviteHash);
                 }
             }
         }
