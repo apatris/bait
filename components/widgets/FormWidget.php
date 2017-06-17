@@ -98,7 +98,7 @@ class FormWidget extends Widget
 
                 $fieldHtml .= $this->generateLabel($field);
                 $fieldHtml .= Html::textInput(
-                    $field['name'],
+                    $field['label'],
                     '',
                     $options
                 );
@@ -114,7 +114,7 @@ class FormWidget extends Widget
 
                 $fieldHtml .= $this->generateLabel($field);
                 $fieldHtml .= Html::textarea(
-                    $field['name'],
+                    $field['label'],
                     '',
                     $options
                 );
@@ -167,6 +167,8 @@ class FormWidget extends Widget
                 break;
         }
 
+        $fieldHtml .= $this->generateHiddenInputForLabel($field);
+
         $html = Html::tag(
             'div',
             $fieldHtml,
@@ -210,6 +212,19 @@ class FormWidget extends Widget
         return Html::label(
             $field['label'],
             $field['name'],
+            $options
+        );
+    }
+
+    /**
+     * @param \SimpleXMLElement $field
+     * @param array $options
+     * @return string
+     */
+    private function generateHiddenInputForLabel(\SimpleXMLElement $field, $options = []){
+        return Html::hiddenInput(
+            $field['name'] . '-label',
+            $field['label'],
             $options
         );
     }

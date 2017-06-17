@@ -4,6 +4,7 @@
 /* @var $content string */
 
 use app\components\widgets\LanguageSwitcher;
+use app\components\widgets\PaceWidget;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\helpers\Url;
@@ -224,7 +225,7 @@ AppAsset::register($this);
     <!-- End Page Content -->
 </aside>
 
-<?= uran1980\yii\widgets\pace\Pace::widget([
+<?= PaceWidget::widget([
     'color' => 'white',
     'theme' => 'flash',
 ]); ?>

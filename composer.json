@@ -12,18 +12,16 @@
         "irc": "irc://irc.freenode.net/yii",
         "source": "https://github.com/yiisoft/yii2"
     },
-    "minimum-stability": "dev",
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=7.0",
         "yiisoft/yii2": ">=2.0.5",
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "dektrium/yii2-user": "0.9.*@dev",
         "dektrium/yii2-rbac": "dev-master",
         "kartik-v/yii2-widget-growl": "*",
-        "pheme/yii2-i18n-url": "*",
         "zelenin/yii2-i18n-module": "dev-master",
-        "uran1980/yii2-pace-widget": "dev-master",
+        "bower-asset/pace": "*",
         "conquer/slimscroll": "*",
         "rmrevin/yii2-fontawesome": "~2.15"
     },

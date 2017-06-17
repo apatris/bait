@@ -29,7 +29,15 @@ $config = [
             'errorAction' => 'site/error',
         ],
         'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer'
+            'class' => 'yii\swiftmailer\Mailer',
+            'useFileTransport' => true,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'blue.elastictech.org',
+                'username' => 'info@u1669.blue.elastictech.org',
+                'password' => '00Fememo',
+                'port' => '25'
+            ]
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -42,7 +50,7 @@ $config = [
         ],
         'db' => require(__DIR__ . '/db.php'),
         'urlManager' => [
-            'class' => 'pheme\i18n\I18nUrlManager',
+            'class' => 'app\components\managers\I18nUrlManager',
             'languages' => ['English' => 'en', 'Русский' => 'ru', 'Polska' => 'pl'],
             'aliases' => ['en' => 'en-US', 'ru' => 'ru-RU', 'pl' => 'pl-PL'],
             'enablePrettyUrl' => true,
@@ -52,6 +60,7 @@ $config = [
                 '<action:(user-profile)>/<id:\w+>' => 'site/<action>',
                 '<controller:(proposals)>/<action:(send|successfully)>/<hash>' => '<controller>/<action>',
                 '<controller:(proposals)>/<action:(delete|activate)>/<id>' => '<controller>/<action>',
+                '<controller:(profile)>/<id>' => '<controller>/index',
             ],
         ],
     ],
@@ -67,7 +76,9 @@ $config = [
         'rbac' => [
             'class' => 'dektrium\rbac\RbacWebModule',
         ],
-        'i18n' => Zelenin\yii\modules\I18n\Module::className()
+        'i18n' => [
+            'class' => Zelenin\yii\modules\I18n\Module::className(),
+        ]
     ],
     'sourceLanguage' => 'en-US',
     'params' => $params,
@@ -78,13 +89,13 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        'allowedIPs' => ['178.43.11.222']
+        //'allowedIPs' => ['176.109.244.133']
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        'allowedIPs' => ['83.31.209.67']
+        //'allowedIPs' => ['176.109.244.133']
     ];
 }
 

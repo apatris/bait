@@ -6,6 +6,10 @@ use yii;
 use yii\bootstrap\Html;
 use yii\bootstrap\Widget;
 
+/**
+ * Class FamilyTreeWidget
+ * @package app\components\widgets
+ */
 class FamilyTreeWidget extends Widget
 {
     public $nodes;

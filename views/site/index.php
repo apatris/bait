@@ -63,6 +63,22 @@ $this->title = 'Main page';
 
                                     return '<b class="text-' . ($status ? 'success' : 'danger') . '">' . ($status ? 'active' : 'inactive') . '</b>';
                                 }
+                            ],
+                            [
+                                'attribute' => 'Resend invite',
+                                'format' => 'raw',
+                                'value' => function ($model) {
+                                    return Html::a('resend',
+                                        ['/email/resend-invite'],
+                                        [
+                                            'class' => 'btn btn-primary',
+                                            'data' => [
+                                                'method' => 'post',
+                                                'params' => ['email' => $model->email]
+                                            ],
+                                        ]
+                                    );;
+                                }
                             ]
                         ],
                     ]) ?>

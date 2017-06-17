@@ -72,13 +72,18 @@ class Person extends \yii\db\ActiveRecord
         return $hash;
     }
 
+    /**
+     * @return bool
+     */
     public function sendInvite(){
-        Yii::$app->mailer->compose()
+        $response = Yii::$app->mailer->compose()
             ->setFrom(Yii::$app->params['adminEmail'])
             ->setTo($this->email)
             ->setSubject('Want or no?')
             ->setHtmlBody('<a href="'.Url::to(['proposals/send/'.$this->inviteHash], true).'">Dołączać</a>')
             ->send();
+
+        return $response;
     }
 
     /**

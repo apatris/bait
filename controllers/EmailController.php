@@ -72,4 +72,21 @@ class EmailController extends Controller
         
         return $this->redirect('/');
     }
+
+    public function actionResendInvite ()
+    {
+        $post = Yii::$app->request->post();
+
+        if (!empty($post['email'])) {
+            $person = Person::findOne(['email' => $post['email']]);
+            if (!empty($person)) {
+                Yii::trace($person->sendInvite());
+
+                Yii::$app->session->addFlash('send-invite', Growl::TYPE_SUCCESS);
+                Yii::$app->session->addFlash('send-invite', 'The invitation was resent successfully!');
+            }
+        }
+
+        return $this->redirect('/');
+    }
 }
