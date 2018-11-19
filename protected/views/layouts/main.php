@@ -76,7 +76,7 @@ AppAsset::register($this);
 
                 <li class="item">
                     <!-- Right Sidebar Toggle Button -->
-                    <a href="<?= Url::to(['/invited-tree']) ?>" class="nav-button">
+                    <a href="<?= Url::to(['/site/invited-tree']) ?>" class="nav-button">
                         <?= Yii::$app->user->identity->username ?>
                     </a>
                     <!-- End Right Sidebar Toggle Button -->
@@ -143,7 +143,7 @@ AppAsset::register($this);
             <!-- Menu Item -->
             <?php if (!Yii::$app->user->isGuest) { ?>
                 <li class="border-left-purple">
-                    <a href="<?= Url::to(['/invited-tree']) ?>" title="Dashboard">
+                    <a href="<?= Url::to(['/site/invited-tree']) ?>" title="Dashboard">
                         <?= '<i class="menu-icon fa fa-lg fa-users"></i>' . Yii::t('app', 'Invited') ?>
                     </a>
                 </li>

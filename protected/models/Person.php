@@ -16,6 +16,7 @@ use yii\helpers\Url;
  * @property string $email
  * @property string $inviteHash
  * @property string $creationDate
+ *
  * @property Proposal $proposal
  */
 class Person extends \yii\db\ActiveRecord
@@ -34,11 +35,11 @@ class Person extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['email', 'whoInvited'], 'required'],
             [['whoInvited', 'userId'], 'integer'],
             [['creationDate'], 'safe'],
             [['inviteHash', 'code'], 'string'],
             [['email'], 'email'],
-            [['email', 'whoInvited'], 'required'],
         ];
     }
 

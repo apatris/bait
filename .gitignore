@@ -1,6 +1,6 @@
 web/assets/*
-runtime/*
-config/db.php
+protected/runtime/*
+protected/config/db.php
 
 # phpstorm project files
 .idea
@@ -17,7 +17,7 @@ nbproject
 Thumbs.db
 
 # composer vendor dir
-/vendor
+protected/vendor
 
 # composer itself is not needed
 composer.phar

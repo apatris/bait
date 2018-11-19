@@ -13,10 +13,10 @@ $config = [
         ],
         'i18n' => [
             'class' => Zelenin\yii\modules\I18n\components\I18N::className(),
-            'languages' => ['ru-RU', 'pl-PL']
+            'languages' => ['en' => 'en-US', 'ru-RU', 'pl-PL']
         ],
         'request' => [
-            'cookieValidationKey' => 'sZBlR-a5gAcapFmShtkR-Sa7sfQoXPft',
+            'cookieValidationKey' => 'sZBlR-a5gAcapFmShtkR-Sa1sfQoXPft',
             'baseUrl' => ''
         ],
         'cache' => [
@@ -56,7 +56,6 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '<action:(invited-tree)>' => 'site/<action>',
                 '<action:(user-profile)>/<id:\w+>' => 'site/<action>',
                 '<controller:(proposals)>/<action:(send|successfully)>/<hash>' => '<controller>/<action>',
                 '<controller:(proposals)>/<action:(delete|activate)>/<id>' => '<controller>/<action>',
@@ -67,11 +66,15 @@ $config = [
     'modules' => [
         'user' => [
             'class' => 'dektrium\user\Module',
+            'admins' => ['admin'],
             'enableConfirmation' => false,
-            'enableRegistration' => false,
+            'enableRegistration' => true,
             //'enableGeneratingPassword' => true,
             'rememberFor' => 2419200,
-            'admins' => ['krava', 'admin']
+            'urlRules' => [
+                'security/login' => 'login',
+                'registration/<action:(register|resend)>' => '<action>',
+            ],
         ],
         'rbac' => [
             'class' => 'dektrium\rbac\RbacWebModule',

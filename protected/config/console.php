@@ -15,7 +15,8 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'i18n' => [
-            'class' => Zelenin\yii\modules\I18n\components\I18N::className()
+            'class' => Zelenin\yii\modules\I18n\components\I18N::className(),
+            'languages' => ['ru-RU', 'pl-PL']
         ],
         'authManager' => [
             'class' => 'dektrium\rbac\components\DbManager',
