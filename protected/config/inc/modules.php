@@ -8,10 +8,6 @@ return [
         'enableRegistration' => true,
         //'enableGeneratingPassword' => true,
         'rememberFor' => 2419200,
-        'urlRules' => [
-            'security/login' => 'login',
-            'registration/<action:(register|resend)>' => '<action>',
-        ],
     ],
     'rbac' => [
         'class' => 'dektrium\rbac\RbacWebModule',
