@@ -17,7 +17,7 @@ class FormWidget extends Widget
         parent::init();
         
         if (empty($this->xml)) {
-            $this->xml = simplexml_load_file('../files/xml/form.xml');
+            $this->xml = simplexml_load_file('files/xml/form.xml');
         } else {
             $this->xml = simplexml_load_string($this->xml);
         }
