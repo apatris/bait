@@ -1,6 +1,7 @@
 web/assets/*
 protected/runtime/*
-protected/config/db.php
+protected/config/inc/db.php
+protected/config/inc/mailerAuth.php
 
 # phpstorm project files
 .idea

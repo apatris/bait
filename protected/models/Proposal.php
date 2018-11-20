@@ -12,6 +12,7 @@ use Yii;
  * @property string $data
  * @property string $additionTime
  * @property integer $activated
+ *
  * @property Person $person
  */
 class Proposal extends \yii\db\ActiveRecord

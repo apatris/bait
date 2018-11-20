@@ -1,5 +1,10 @@
 <?php
 
+$db = require __DIR__ . '/inc/db.php';
+$urlManager = require __DIR__ . '/inc/urlManager.php';
+$mailerAuth = require __DIR__ . '/inc/mailerAuth.php';
+$mailer = require __DIR__ . '/inc/mailer.php';
+$modules = require __DIR__ . '/inc/modules.php';
 $params = require(__DIR__ . '/params.php');
 
 $config = [
@@ -28,17 +33,7 @@ $config = [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'mailer' => [
-            'class' => 'yii\swiftmailer\Mailer',
-            'useFileTransport' => true,
-            'transport' => [
-                'class' => 'Swift_SmtpTransport',
-                'host' => 'blue.elastictech.org',
-                'username' => 'info@u1669.blue.elastictech.org',
-                'password' => '00Fememo',
-                'port' => '25'
-            ]
-        ],
+        'mailer' => $mailer,
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -48,41 +43,10 @@ $config = [
                 ],
             ],
         ],
-        'db' => require(__DIR__ . '/db.php'),
-        'urlManager' => [
-            'class' => 'app\components\managers\I18nUrlManager',
-            'languages' => ['English' => 'en', 'Русский' => 'ru', 'Polska' => 'pl'],
-            'aliases' => ['en' => 'en-US', 'ru' => 'ru-RU', 'pl' => 'pl-PL'],
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-                '<action:(user-profile)>/<id:\w+>' => 'site/<action>',
-                '<controller:(proposals)>/<action:(send|successfully)>/<hash>' => '<controller>/<action>',
-                '<controller:(proposals)>/<action:(delete|activate)>/<id>' => '<controller>/<action>',
-                '<controller:(profile)>/<id>' => '<controller>/index',
-            ],
-        ],
+        'db' => $db,
+        'urlManager' => $urlManager,
     ],
-    'modules' => [
-        'user' => [
-            'class' => 'dektrium\user\Module',
-            'admins' => ['admin'],
-            'enableConfirmation' => false,
-            'enableRegistration' => true,
-            //'enableGeneratingPassword' => true,
-            'rememberFor' => 2419200,
-            'urlRules' => [
-                'security/login' => 'login',
-                'registration/<action:(register|resend)>' => '<action>',
-            ],
-        ],
-        'rbac' => [
-            'class' => 'dektrium\rbac\RbacWebModule',
-        ],
-        'i18n' => [
-            'class' => Zelenin\yii\modules\I18n\Module::className(),
-        ]
-    ],
+    'modules' => $modules,
     'sourceLanguage' => 'en-US',
     'params' => $params,
 ];
