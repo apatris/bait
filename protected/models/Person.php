@@ -83,8 +83,6 @@ class Person extends \yii\db\ActiveRecord
             ->setSubject('Want or no?')
             ->setHtmlBody('<a href="'.Url::to(['proposals/send/'.$this->inviteHash], true).'">Dołączać</a>')
             ->send();
-        
-        file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/test.txt', print_r($response, true));
 
         return $response;
     }
