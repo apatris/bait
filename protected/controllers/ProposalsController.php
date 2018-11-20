@@ -2,30 +2,25 @@
 
 namespace app\controllers;
 
-use app\components\managers\TreeManager;
-use dektrium\user\models\User;
-use kartik\growl\Growl;
 use yii;
-use app\models\Person;
-use app\models\Proposal;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
+use app\components\managers\TreeManager;
+use dektrium\user\models\User;
+use kartik\growl\Growl;
+use app\models\Person;
+use app\models\Proposal;
 
+/**
+ * Class ProposalsController
+ * @package app\controllers
+ */
 class ProposalsController extends Controller
 {
-    public function actions()
-    {
-        return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ]
-        ];
-    }
-
     public function behaviors()
     {
         return [
@@ -49,6 +44,9 @@ class ProposalsController extends Controller
         ];
     }
 
+    /**
+     * @return string
+     */
     public function actionIndex()
     {
         $dataProvider =  new ActiveDataProvider([
@@ -61,6 +59,10 @@ class ProposalsController extends Controller
         ]);
     }
 
+    /**
+     * @return string
+     * @throws NotFoundHttpException
+     */
     public function actionSuccessfully()
     {
         $person = Person::findOne(['inviteHash' => Yii::$app->request->get('hash')]);
@@ -74,10 +76,13 @@ class ProposalsController extends Controller
         }
     }
 
-    public function actionSend()
+    /**
+     * @param $hash
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionSend($hash)
     {
-        $hash = Yii::$app->request->get('hash');
-
         $person = Person::findOne(['inviteHash' => $hash]);
 
         if (!empty($person->id) && !Proposal::issetBid($person->id)) {
@@ -89,6 +94,10 @@ class ProposalsController extends Controller
         }
     }
 
+    /**
+     * @return yii\web\Response
+     * @throws NotFoundHttpException
+     */
     public function actionSave()
     {
         $post = Yii::$app->request->post();
@@ -117,6 +126,12 @@ class ProposalsController extends Controller
     }
 
 
+    /**
+     * @param $id
+     * @return yii\web\Response
+     * @throws \Exception
+     * @throws yii\db\StaleObjectException
+     */
     public function actionDelete($id)
     {
         $proposal = Proposal::findOne($id);
@@ -128,6 +143,11 @@ class ProposalsController extends Controller
         return $this->redirect('/proposals');
     }
 
+    /**
+     * @param $id
+     * @return yii\web\Response
+     * @throws yii\base\InvalidConfigException
+     */
     public function actionActivate($id)
     {
         $proposal = Proposal::findOne($id);
