@@ -3,6 +3,8 @@ protected/runtime/*
 protected/config/inc/db.php
 protected/config/inc/mailerAuth.php
 
+protected/nodejs/node_modules/*
+
 # phpstorm project files
 .idea
 

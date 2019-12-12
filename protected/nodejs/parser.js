@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 
 exports.parseSite = async (login, pass, res) => {
+	//const browser = await puppeteer.launch({args: '--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'});
 	const browser = await puppeteer.launch({headless: false});
 	const page = await browser.newPage();
 	
@@ -22,6 +23,7 @@ exports.parseSite = async (login, pass, res) => {
     const text = await page.evaluate(element => element.textContent, element);
 
 	browser.close();
-	res.setHeader('Content-Type', 'application/json');
-	res.end(JSON.stringify({ a: text}));
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ a: text}));
 };
