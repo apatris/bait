@@ -23,7 +23,10 @@ exports.parseSite = async (login, pass, res) => {
     const text = await page.evaluate(element => element.textContent, element);
 
 	browser.close();
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ a: text}));
+	res.statusCode = 200;
+res.setHeader('Content-Type', 'application/json');
+const responseBody = { a: text};
+
+res.write(JSON.stringify(responseBody));
+res.end();
 };
