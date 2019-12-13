@@ -24,7 +24,7 @@ exports.parseWniski = async (login, pass, email) => {
 		var item = await page. $('.validation-summary-errors');
 		if (item) {
 			browser.close();
-			return {status:'parse_noauth>>>'};
+			return {result:'parse_noauth>>>'};
 		}
 		//
 
@@ -59,5 +59,5 @@ exports.parseWniski = async (login, pass, email) => {
 		browser.close();
 
 
-		return {status:'parse_complete>>>' + headerText + '::' + resDataTds.join('###')};
+		return {result:'parse_complete>>>' + headerText + '::' + resDataTds.join('###')};
 };
