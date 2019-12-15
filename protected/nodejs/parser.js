@@ -2,8 +2,8 @@ const puppeteer = require('puppeteer');
 
 exports.parseWniski = async (login, pass, email) => {
 	//try {
-		//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050']});
-		const browser = await puppeteer.launch({headless: false});
+		const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050']});
+		//const browser = await puppeteer.launch({headless: false});
 		const page = await browser.newPage();
 
 		await page.goto('https://wnioski.mazowieckie.pl/MuwWsc/PL');
