@@ -4,6 +4,7 @@ protected/config/inc/db.php
 protected/config/inc/mailerAuth.php
 
 protected/nodejs/node_modules/*
+protected/nodejs/data/*
 
 # phpstorm project files
 .idea
