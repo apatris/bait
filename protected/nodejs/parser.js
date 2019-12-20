@@ -84,13 +84,11 @@ exports.parseSantander = async (login, pass) => {
 				    });
 			}, 80000); });
 
-		await page.type('#input_nik.input_sms_code', code);
+		await page.type('#input_nik.input_sms_code', code.replace('-', ''));
 		await page.click('[name=loginButton]');
 	}
 
-
 	//#wylogowanie .error
-
 
 	await page.waitForResponse(response => response.status() === 200);
 
