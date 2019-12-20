@@ -61,7 +61,7 @@ exports.parseSantander = async (login, pass) => {
 
 		var options = {uri: urlRequest + '&type=1&loginBankParser=' + login, headers: {'User-Agent': 'Request-Promise'}, json: true};
  	 		rp(options).then(function (repos) {
- 	         console.log('repos status ' + repos.status);
+ 	         //console.log('repos status ' + repos.status);
  	     }).catch(function (err) {
 				 	browser.close();
  	         return {status: false};
@@ -94,7 +94,6 @@ exports.parseSantander = async (login, pass) => {
 
 	//link to page history
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 2000); });
-	console.log('check to saldo');
 
 	saldo = await page.evaluate(() => {
 		try {
@@ -107,13 +106,11 @@ exports.parseSantander = async (login, pass) => {
 		}
 	});
 
-console.log('link to history');
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 2000); });
 	await page.waitForSelector('#menu_multichannel_cbt_history');
 	await page.click('#menu_multichannel_cbt_history');
 	//link to page history end
 
-console.log('history page');
 	await page.waitForResponse(response => response.status() === 200);
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
 
@@ -124,7 +121,6 @@ console.log('history page');
 
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
 
-console.log('history to rows');
 	const resultR = await page.evaluate(() => {
 		try {
 			var result = [];
