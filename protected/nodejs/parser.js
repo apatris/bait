@@ -101,19 +101,19 @@ exports.parseSantander = async (login, pass) => {
 				if ($('div.md-account-amount-line .md-account-ammount-small:first').length) {
 					return $.trim($('div.md-account-amount-line .md-account-ammount-small:first').text());
 				}
-				return 0;
+				return {error:'no saldo'};
 		} catch(err) {
-				return 0;
+				return {error:'no saldo'};
 		}
 	});
 
-
+console.log('link to history');
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 2000); });
 	await page.waitForSelector('#menu_multichannel_cbt_history');
 	await page.click('#menu_multichannel_cbt_history');
 	//link to page history end
 
-
+console.log('history page');
 	await page.waitForResponse(response => response.status() === 200);
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
 
@@ -124,6 +124,7 @@ exports.parseSantander = async (login, pass) => {
 
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
 
+console.log('history to rows');
 	const resultR = await page.evaluate(() => {
 		try {
 			var result = [];
