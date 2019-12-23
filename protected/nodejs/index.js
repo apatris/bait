@@ -43,9 +43,9 @@ app.get('/get-bank-files', function (req, res) {
 		    return files_;
 			};
 
-			let file = getFiles(__dirname + '\\tmp');
-			if (file) {
-				resultG = {file:file[0]};
+			let file = getFiles(__dirname + '/tmp');
+			if (file.length > 0) {
+				resultG = {file:file[file.length -1]};
 			}
 	}
 
