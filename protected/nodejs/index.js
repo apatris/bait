@@ -45,7 +45,10 @@ app.get('/get-bank-files', function (req, res) {
 
 			let file = getFiles(__dirname + '/tmp');
 			if (file.length > 0) {
-				resultG = {file:file[file.length -1]};
+				let thisF = file[file.length -1];
+				let fileName = path.parse(thisF).name;
+				let fileExt = path.parse(thisF).ext;
+				resultG = {file:"http://tech.uatopl.com/protected/nodejs/tmp/"+fileName + fileExt};
 			}
 	}
 
