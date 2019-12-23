@@ -113,13 +113,15 @@ exports.parseSantander = async (login, pass) => {
 
 	await page.waitForResponse(response => response.status() === 200);
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
-//console.log('----');
+	console.log('----');
 
 //	await page.waitForSelector('table span.show-all-operations.operations-shown');
 //	await page.click('table span.show-all-operations.operations-shown');
 
 //	await page.waitForSelector('div.pfm-history-container table tbody tr.transaction-details-row');
 	let urlRR = __dirname + '\\tmp';
+	console.log(urlRR);
+	
 	await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: urlRR});
 
 	await page.click('#btn-csv');
