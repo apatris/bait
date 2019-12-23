@@ -7,10 +7,10 @@ exports.parseSantander = async (login, pass) => {
 	let urlRequest = 'https://e.apatris.pl/mod/api/request-sms?token=bank-token';
 
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-	// const browser = await puppeteer.launch({
-	// 	headless: false,
-	// 	userDataDir: './data/data_' + login
-	// });
+	 // const browser = await puppeteer.launch({
+	 // 	headless: false,
+	 // 	userDataDir: './data/data_' + login
+	 // });
 
 	const page = await browser.newPage();
 	await page.goto('https://www.centrum24.pl/centrum24-web/login');
@@ -100,9 +100,9 @@ exports.parseSantander = async (login, pass) => {
 				if ($('div.md-account-amount-line .md-account-ammount-small:first').length) {
 					return $.trim($('div.md-account-amount-line .md-account-ammount-small:first').text());
 				}
-				return {error:'no saldo'};
+				return {error:'0'};
 		} catch(err) {
-				return {error:'no saldo'};
+				return {error:'0'};
 		}
 	});
 
@@ -113,39 +113,50 @@ exports.parseSantander = async (login, pass) => {
 
 	await page.waitForResponse(response => response.status() === 200);
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
+//console.log('----');
 
-	await page.waitForSelector('table span.show-all-operations.operations-shown');
-	await page.click('table span.show-all-operations.operations-shown');
+//	await page.waitForSelector('table span.show-all-operations.operations-shown');
+//	await page.click('table span.show-all-operations.operations-shown');
 
-	await page.waitForSelector('div.pfm-history-container table tbody tr.transaction-details-row');
+//	await page.waitForSelector('div.pfm-history-container table tbody tr.transaction-details-row');
+	let urlRR = __dirname + '\\tmp';
+	await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: urlRR});
 
-	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
-
-	const resultR = await page.evaluate(() => {
-		try {
-			var result = [];
-				$('div.pfm-history-container table tbody tr.transaction-details-row').each(function(index) {
-					var $details = $(this).find('div.detais');
-					var arr = [
-						$.trim($details.find('span:contains("Data transakcji")').closest('div').find('.wartosc').text()),    // date
-						$.trim($details.find('span.wartosc_right:first').text()),       // amount
-						$.trim($details.find('span.wartosc_right:last').text()),      // balance
-						$.trim($details.find('span.accountNumber:first').text()), // fromAccount
-						$.trim($details.find('span.accountNumber:first').closest('span.wartosc').find('span:last').text()), // fromName
-						$.trim($details.find('span.accountNumber:last').text()),   // toAccount
-						$.trim($details.find('span.accountNumber:last').closest('span.wartosc').find('span:last').text()),  // toName
-						$.trim($details.find('span:contains("Typ operacji")').closest('div').find('.wartosc').text()) // description
-					];
-					result.push(arr.join('||'));
-				});
-				return result.join('###');
-		} catch(err) {
-				reject(err.toString());
-		}
-	});
+	await page.click('#btn-csv');
+	await page.click('#btn-csv');
+	await page.click('.btn-csv-download');
+	await page.waitFor(5000);
 
 	browser.close();
-	return {result:'parse_complete>>>' + saldo + '::' + resultR};
+	return {status:true};
+
+	// await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
+	//
+	// const resultR = await page.evaluate(() => {
+	// 	try {
+	// 		var result = [];
+	// 			$('div.pfm-history-container table tbody tr.transaction-details-row').each(function(index) {
+	// 				var $details = $(this).find('div.detais');
+	// 				var arr = [
+	// 					$.trim($details.find('span:contains("Data transakcji")').closest('div').find('.wartosc').text()),    // date
+	// 					$.trim($details.find('span.wartosc_right:first').text()),       // amount
+	// 					$.trim($details.find('span.wartosc_right:last').text()),      // balance
+	// 					$.trim($details.find('span.accountNumber:first').text()), // fromAccount
+	// 					$.trim($details.find('span.accountNumber:first').closest('span.wartosc').find('span:last').text()), // fromName
+	// 					$.trim($details.find('span.accountNumber:last').text()),   // toAccount
+	// 					$.trim($details.find('span.accountNumber:last').closest('span.wartosc').find('span:last').text()),  // toName
+	// 					$.trim($details.find('span:contains("Typ operacji")').closest('div').find('.wartosc').text()) // description
+	// 				];
+	// 				result.push(arr.join('||'));
+	// 			});
+	// 			return result.join('###');
+	// 	} catch(err) {
+	// 			reject(err.toString());
+	// 	}
+	// });
+
+//	browser.close();
+	//return {result:'parse_complete>>>' + saldo + '::' + resultR};
 }
 
 
