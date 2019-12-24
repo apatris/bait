@@ -17,6 +17,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	await page.type('#logowanie #input_nik', login);
 	await page.click('[name=loginButton]');
 	//login step1 end
+	console.log('login');
 
 	await page.waitForResponse(response => response.status() === 200);
 
@@ -33,6 +34,8 @@ exports.parseSantander = async (login, pass, flag) => {
 
 	await page.click('#okBtn2');
 	//login step2 end
+
+	console.log('pass');
 
 	await page.waitForResponse(response => response.status() === 200);
 
