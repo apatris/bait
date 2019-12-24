@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 var rp = require('request-promise');
 
 exports.parseSantander = async (login, pass, flag) => {
-	let urlRequest = 'https://e.apatris.pl/mod/api/request-sms?token=bank-token';
+	let urlRequest = 'https://e.apatris.pl/mod/api/request-sms?token=bank-token&flag=' + flag;
 
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
@@ -60,14 +60,14 @@ console.log('step3');
 	let inputCode = await page. $('#input_nik.input_sms_code');
 	if (inputCode) {
 
-	var optionsP = {uri: urlRequest + '&type=1&loginBankParser=' + login, headers: {'User-Agent': 'Request-Promise'}, json: true};
+	var optionsP = {uri: urlRequest + '&type=1', headers: {'User-Agent': 'Request-Promise'}, json: true};
  	rp(optionsP).then(function (repos) {}).catch(function (err) {
 		browser.close();
  	  return {status: false};
  	});
 
 	let code = ''; //get query - check if insert code
-	let options = {uri: urlRequest + '&type=2&loginBankParser=' + login, headers: {'User-Agent': 'Request-Promise'}, json: true};
+	let options = {uri: urlRequest + '&type=2', headers: {'User-Agent': 'Request-Promise'}, json: true};
 	await new Promise(function(resolve, reject) { setTimeout(function() {
 		rp(options).then(function (repos) {
 			if (repos.status) {
