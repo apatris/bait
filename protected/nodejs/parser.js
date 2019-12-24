@@ -8,11 +8,11 @@ exports.parseSantander = async (login, pass, flag) => {
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
-		console.log('go to');
+	console.log('go to');
 
 	await page.goto('https://www.centrum24.pl/centrum24-web/login');
 	await page.waitFor(1000);
-	const navigationPromise = page.waitForNavigation({waitUntil: ['networkidle2'] })
+//	const navigationPromise = page.waitForNavigation({waitUntil: ['networkidle2'] })
 
 	//login step1
 	await page.waitForSelector('#logowanie-inner-NIK #input_nik');
