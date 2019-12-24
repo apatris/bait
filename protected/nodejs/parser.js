@@ -47,7 +47,7 @@ exports.parseSantander = async (login, pass, flag) => {
 		await page.click('.orderProcessWizard #confirm-button');
 	}
 	//if step3 end
-
+console.log('step3');
 	await page.waitForResponse(response => response.status() === 200);
 
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 6000); });
@@ -93,6 +93,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	await page.waitForSelector('#menu_multichannel_cbt_history');
 	await page.click('#menu_multichannel_cbt_history');
 	//link to page history end
+console.log('history');
 
 	await page.waitForResponse(response => response.status() === 200);
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
@@ -100,6 +101,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	let urlRR = __dirname + '/tmp/' + flag;
 
 	await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: urlRR});
+console.log('tmp');
 
 	await page.click('#btn-csv');
 	await page.click('#btn-csv');
