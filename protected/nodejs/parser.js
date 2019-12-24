@@ -8,7 +8,6 @@ exports.parseSantander = async (login, pass, flag) => {
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
-	console.log('go to');
 
 	await page.goto('https://www.centrum24.pl/centrum24-web/login');
 	await page.waitFor(1000);
@@ -19,13 +18,23 @@ exports.parseSantander = async (login, pass, flag) => {
 	await page.type('#logowanie #input_nik', login);
 	await page.click('[name=loginButton]');
 	//login step1 end
-	console.log('login');
 
 	await page.waitForResponse(response => response.status() === 200);
+	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 3000); });
 
 	//login step2
-	await page.waitForSelector('#logowanie #ordinarypin');
-	await page.type('#logowanie #ordinarypin', pass);
+	let pasT = await page. $('.passwordTable');
+	if (pasT) {
+		for (var i = 0; i < pass.length; i++) {
+			var pasTP = await page. $('.passwordTable #pass' + (i + 1));
+			if (pasTP) {
+				await page.type('.passwordTable #pass' + (i + 1), pass.charAt(i));
+			}
+		}
+	} else {
+		await page.waitForSelector('#logowanie #ordinarypin');
+		await page.type('#logowanie #ordinarypin', pass);
+	}
 
 	//if chekbox remember
 	var checkRemamber = await page. $('input[type="checkbox"]');
@@ -36,8 +45,6 @@ exports.parseSantander = async (login, pass, flag) => {
 
 	await page.click('#okBtn2');
 	//login step2 end
-
-	console.log('pass');
 
 	await page.waitForResponse(response => response.status() === 200);
 
@@ -52,36 +59,34 @@ exports.parseSantander = async (login, pass, flag) => {
 		await page.click('.orderProcessWizard #confirm-button');
 	}
 	//if step3 end
-console.log('step3');
 	await page.waitForResponse(response => response.status() === 200);
 
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 6000); });
 
 	let inputCode = await page. $('#input_nik.input_sms_code');
 	if (inputCode) {
-
-	var optionsP = {uri: urlRequest + '&type=1', headers: {'User-Agent': 'Request-Promise'}, json: true};
- 	rp(optionsP).then(function (repos) {}).catch(function (err) {
-		browser.close();
- 	  return {status: false};
- 	});
-
-	let code = ''; //get query - check if insert code
-	let options = {uri: urlRequest + '&type=2', headers: {'User-Agent': 'Request-Promise'}, json: true};
-	await new Promise(function(resolve, reject) { setTimeout(function() {
-		rp(options).then(function (repos) {
-			if (repos.status) {
-				code = repos.code;
-				resolve(true);
-			} else {
-				browser.close();
-				return {result: 'error request get code 1'};
-			}
-		}).catch(function (err) {
+		var optionsP = {uri: urlRequest + '&type=1', headers: {'User-Agent': 'Request-Promise'}, json: true};
+	 	rp(optionsP).then(function (repos) {}).catch(function (err) {
 			browser.close();
-			return {result: 'error request get code 2'};
-		});
-	}, 80000); });
+	 	  return {status: false};
+	 	});
+
+		let code = ''; //get query - check if insert code
+		let options = {uri: urlRequest + '&type=2', headers: {'User-Agent': 'Request-Promise'}, json: true};
+		await new Promise(function(resolve, reject) { setTimeout(function() {
+			rp(options).then(function (repos) {
+				if (repos.status) {
+					code = repos.code;
+					resolve(true);
+				} else {
+					resolve(false);
+					console.log('error request get code 1');
+				}
+			}).catch(function (err) {
+				resolve(false);
+				console.log('error request get code 2');
+			});
+		}, 80000); });
 
 		await page.type('#input_nik.input_sms_code', code.replace('-', ''));
 		await page.click('[name=loginButton]');
@@ -98,7 +103,6 @@ console.log('step3');
 	await page.waitForSelector('#menu_multichannel_cbt_history');
 	await page.click('#menu_multichannel_cbt_history');
 	//link to page history end
-console.log('history');
 
 	await page.waitForResponse(response => response.status() === 200);
 	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
@@ -106,7 +110,6 @@ console.log('history');
 	let urlRR = __dirname + '/tmp/' + flag;
 
 	await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: urlRR});
-console.log('tmp');
 
 	await page.click('#btn-csv');
 	await page.click('#btn-csv');
@@ -183,21 +186,29 @@ exports.parseWniski = async (login, pass, email) => {
 };
 
 
-exports.parseApatris = async (login, pass) => {
-	let result = '';
+exports.parseCiti = async (login, pass) => {
+	let result = false;
 
-	//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050']});
-	const browser = await puppeteer.launch({
-		headless: false,
-		userDataDir: './data'
-	});
+	//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
-	await page.goto('http://uatopl.com/');
+	await page.goto('https://www.citibankonline.pl/apps/auth/signin/');
 	await page.waitFor(1000);
 
-//	console.log(login);
-//	console.log(pass);
+	//login begin
+	await page.waitForSelector('#SignonForm');
+	await page.type('#username_input', login);
+	await page.type('#password_input', pass);
+	await page.click('#submit_body');
+	//login end
+
+	await page.waitForResponse(response => response.status() === 200);
+	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 5000); });
+
+	await page.click('#headingTwo');
+
+	await page.click('#subCCAccordion');
 
 	return {result:result};
 }

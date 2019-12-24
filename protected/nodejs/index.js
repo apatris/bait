@@ -24,6 +24,16 @@ app.get('/get-bank-santander', function (req, res) {
 	}
 });
 
+app.get('/get-bank-citi', function (req, res) {
+	var query = req.query;
+	if (query && query.login && query.pass) {
+		parser.parseCiti(query.login, query.pass).then(result => {
+			res.write(JSON.stringify(result));
+			res.end();
+		}) ;
+	}
+});
+
 app.get('/get-bank-files', function (req, res) {
 	let token = 'jjff6fda%f';
 	let resultG = {file:null};
