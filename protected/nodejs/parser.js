@@ -20,7 +20,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	//login step1 end
 
 	await page.waitForResponse(response => response.status() === 200);
-	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 3000); });
+	await page.waitFor(3000);
 
 	//login step2
 	let pasT = await page. $('.passwordTable');
@@ -48,7 +48,7 @@ exports.parseSantander = async (login, pass, flag) => {
 
 	await page.waitForResponse(response => response.status() === 200);
 
-	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 2000); });
+	await page.waitFor(2000);
 
 	//if step3
 	let checkRemamber2 = await page. $('input[type="checkbox"]');
@@ -61,7 +61,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	//if step3 end
 	await page.waitForResponse(response => response.status() === 200);
 
-	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 6000); });
+	await page.waitFor(6000);
 
 	let inputCode = await page. $('#input_nik.input_sms_code');
 	if (inputCode) {
@@ -97,15 +97,14 @@ exports.parseSantander = async (login, pass, flag) => {
 	await page.waitForResponse(response => response.status() === 200);
 
 	//link to page history
-	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 2000); });
 
-	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 2000); });
+	await page.waitFor(2000);
 	await page.waitForSelector('#menu_multichannel_cbt_history');
 	await page.click('#menu_multichannel_cbt_history');
 	//link to page history end
 
 	await page.waitForResponse(response => response.status() === 200);
-	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 8000); });
+	await page.waitFor(8000);
 
 	let urlRR = __dirname + '/tmp/' + flag;
 
@@ -204,11 +203,51 @@ exports.parseCiti = async (login, pass) => {
 	//login end
 
 	await page.waitForResponse(response => response.status() === 200);
-	await new Promise(function(resolve, reject) { setTimeout(function() { resolve(true); }, 5000); });
+	await page.waitFor(8000);
 
+	await page.waitForSelector('#headingTwo');
 	await page.click('#headingTwo');
 
+	await page.waitFor(2000);
+	await page.waitForSelector('#subCCAccordion');
 	await page.click('#subCCAccordion');
 
-	return {result:result};
+	await page.waitFor(30000);
+	await page.evaluate(() => {
+		$('#paginated-datagrid-body a.ui-grid-search-filter').trigger('click');
+	});
+
+	await page.waitFor(2000);
+	await page.evaluate(() => {
+		$('#durationFilter_input').val(60).change();
+	});
+
+	let urlRR = __dirname + '/tmp/citi';
+	//let urlRR = __dirname + '\\tmp\\citi';
+	await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: urlRR});
+
+	await page.waitFor(3000);
+	await page.evaluate(() => {
+		$('#subapp-transaction-links a.download-icon-click').trigger('click');
+	});
+
+	await page.waitFor(2000);
+	await page.evaluate(() => {
+		$('.popover.bottom #cbol-download-popover-selected').trigger('click');
+	});
+
+	await page.waitFor(2000);
+	await page.evaluate(() => {
+		$('.popover.bottom #cbol-download-popover-list li[id="5"]').trigger('click');
+	});
+
+	await page.waitFor(2000);
+	await page.evaluate(() => {
+		$('.popover.bottom #btnPolish_root #btnPolish_body').trigger('click');
+	});
+
+	await page.waitFor(10000);
+
+	browser.close();
+	return {status:true};
 }
