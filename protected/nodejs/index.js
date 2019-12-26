@@ -26,8 +26,8 @@ app.get('/get-bank-santander', function (req, res) {
 
 app.get('/get-bank-citi', function (req, res) {
 	var query = req.query;
-	if (query && query.login && query.pass) {
-		parser.parseCiti(query.login, query.pass).then(result => {
+	if (query && query.login && query.pass && query.flag) {
+		parser.parseCiti(query.login, query.pass, query.flag)).then(result => {
 			res.write(JSON.stringify(result));
 			res.end();
 		}) ;
