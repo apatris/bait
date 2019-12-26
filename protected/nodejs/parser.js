@@ -25,12 +25,19 @@ exports.parseSantander = async (login, pass, flag) => {
 	//login step2
 	let pasT = await page. $('.passwordTable');
 	if (pasT) {
-		for (var i = 0; i < pass.length; i++) {
-			var pasTP = await page. $('.passwordTable #pass' + (i + 1));
-			if (pasTP) {
-				await page.type('.passwordTable #pass' + (i + 1), pass.charAt(i));
-			}
-		}
+		console.log(pass);
+
+		const pass2 = pass;
+		let www = await page.evaluate((pass2) => {
+			let arrayPass = pass2.split('');
+			let k = 0;
+			$(".passwordTable input").each(function() {
+				if (arrayPass[k] !== undefined) {
+					$(this).val(arrayPass[k]);
+				}
+				k = k + 1;
+			});
+		}, pass2);
 	} else {
 		await page.waitForSelector('#logowanie #ordinarypin');
 		await page.type('#logowanie #ordinarypin', pass);
@@ -51,7 +58,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	await page.waitFor(2000);
 
 	//if step3
-	let checkRemamber2 = await page. $('input[type="checkbox"]');
+	let checkRemamber2 = await page. $('.orderProcessWizard input[type="checkbox"]');
 	if (checkRemamber2) {
 		await page.waitForSelector('.orderProcessWizard #confirm-button');
 		await page. $('input[type="checkbox"]');
@@ -86,7 +93,8 @@ exports.parseSantander = async (login, pass, flag) => {
 				resolve(false);
 				console.log('error request get code 2');
 			});
-		}, 80000); });
+		}, 59000); });
+
 
 		await page.type('#input_nik.input_sms_code', code.replace('-', ''));
 		await page.click('[name=loginButton]');
@@ -98,12 +106,19 @@ exports.parseSantander = async (login, pass, flag) => {
 
 	//link to page history
 
-	await page.waitFor(2000);
+	await page.waitFor(4000);
+//	console.log('code');
 	await page.waitForSelector('#menu_multichannel_cbt_history');
 	await page.click('#menu_multichannel_cbt_history');
 	//link to page history end
 
 	await page.waitForResponse(response => response.status() === 200);
+	await page.waitFor(8000);
+
+	await page.evaluate(() => {
+		$('#presetDateSelect').find('input[value="LAST_30_DAYS"]').click();
+	});
+
 	await page.waitFor(8000);
 
 	let urlRR = __dirname + '/tmp/' + flag;
