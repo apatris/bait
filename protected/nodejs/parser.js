@@ -189,7 +189,7 @@ exports.parseCiti = async (login, pass, flag) => {
 	let result = false;
 
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-//	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
 	await page.goto('https://www.citibankonline.pl/apps/auth/signin/');
@@ -203,7 +203,7 @@ exports.parseCiti = async (login, pass, flag) => {
 	//login end
 
 	await page.waitForResponse(response => response.status() === 200);
-	await page.waitFor(8000);
+	await page.waitFor(12000);
 
 	await page.waitForSelector('#headingTwo');
 	await page.click('#headingTwo');
