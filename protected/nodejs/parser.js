@@ -204,6 +204,7 @@ exports.parseCiti = async (login, pass, flag) => {
 
 	await page.waitForResponse(response => response.status() === 200);
 	await page.waitFor(12000);
+	await page.screenshot({path: 'buddy-screenshot.png'});
 
 	await page.waitForSelector('#headingTwo');
 	await page.click('#headingTwo');
