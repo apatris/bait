@@ -42,7 +42,7 @@ exports.parseSantander = async (login, pass, flag) => {
 		await page.waitForSelector('#logowanie #ordinarypin');
 		await page.type('#logowanie #ordinarypin', pass);
 	}
-
+console.log('code' + code);
 	//if chekbox remember
 	var checkRemamber = await page. $('input[type="checkbox"]');
 	if (checkRemamber) {
@@ -107,6 +107,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	//link to page history
 
 	await page.waitFor(4000);
+	console.log('login');
 //	console.log('code');
 	await page.waitForSelector('#menu_multichannel_cbt_history');
 	await page.click('#menu_multichannel_cbt_history');
