@@ -198,6 +198,8 @@ exports.parseCiti = async (login, pass, flag) => {
 	//login begin
 	await page.waitForSelector('#SignonForm');
 	await page.type('#username_input', login);
+	await page.waitFor(2000);
+
 	await page.type('#password_input', pass);
 	await page.click('#submit_body');
 	//login end
