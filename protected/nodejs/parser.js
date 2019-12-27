@@ -2,137 +2,146 @@ const puppeteer = require('puppeteer');
 var rp = require('request-promise');
 
 exports.parseSantander = async (login, pass, flag) => {
+	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku bankName. Proszę sprawdzić.';
 	let urlRequest = 'https://e.apatris.pl/mod/api/request-sms?token=bank-token&flag=' + flag;
 
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
-	const page = await browser.newPage();
-
-	await page.goto('https://www.centrum24.pl/centrum24-web/login');
-	await page.waitFor(1000);
-//	const navigationPromise = page.waitForNavigation({waitUntil: ['networkidle2'] })
-
-	//login step1
-	await page.waitForSelector('#logowanie-inner-NIK #input_nik');
-	await page.type('#logowanie #input_nik', login);
-	await page.click('[name=loginButton]');
-	//login step1 end
-
-	await page.waitForResponse(response => response.status() === 200);
-	await page.waitFor(3000);
-
-	//login step2
-	let pasT = await page. $('.passwordTable');
-	if (pasT) {
-		console.log(pass);
-
-		const pass2 = pass;
-		let www = await page.evaluate((pass2) => {
-			let arrayPass = pass2.split('');
-			let k = 0;
-			$(".passwordTable input").each(function() {
-				if (arrayPass[k] !== undefined) {
-					$(this).val(arrayPass[k]);
-				}
-				k = k + 1;
-			});
-		}, pass2);
-	} else {
-		await page.waitForSelector('#logowanie #ordinarypin');
-		await page.type('#logowanie #ordinarypin', pass);
+	try {
+		const page = await browser.newPage();
+		await page.goto('https://www.centrum24.pl/centrum24-web/login');
+		await page.waitFor(1000);
+	} catch (e) {
+		return {status:false, message: messageError + ' Page error'};
 	}
 
-	//if chekbox remember
-	var checkRemamber = await page. $('input[type="checkbox"]');
-	if (checkRemamber) {
-		await page.click('input[type="checkbox"]');
-	}
-	//if chekbox remember
-
-	await page.click('#okBtn2');
-	//login step2 end
-
-	await page.waitForResponse(response => response.status() === 200);
-
-	await page.waitFor(2000);
-
-	//if step3
-	let checkRemamber2 = await page. $('.orderProcessWizard input[type="checkbox"]');
-	if (checkRemamber2) {
-		await page.waitForSelector('.orderProcessWizard #confirm-button');
-		await page. $('input[type="checkbox"]');
-		await page.click('.orderProcessWizard input[type="checkbox"]');
-		await page.click('.orderProcessWizard #confirm-button');
-	}
-	//if step3 end
-	await page.waitForResponse(response => response.status() === 200);
-
-	await page.waitFor(6000);
-
-	let inputCode = await page. $('#input_nik.input_sms_code');
-	if (inputCode) {
-		var optionsP = {uri: urlRequest + '&type=1', headers: {'User-Agent': 'Request-Promise'}, json: true};
-	 	rp(optionsP).then(function (repos) {}).catch(function (err) {
-			browser.close();
-	 	  return {status: false};
-	 	});
-
-		let code = ''; //get query - check if insert code
-		let options = {uri: urlRequest + '&type=2', headers: {'User-Agent': 'Request-Promise'}, json: true};
-		await new Promise(function(resolve, reject) { setTimeout(function() {
-			rp(options).then(function (repos) {
-				if (repos.status) {
-					code = repos.code;
-					resolve(true);
-				} else {
-					resolve(false);
-					console.log('error request get code 1');
-				}
-			}).catch(function (err) {
-				resolve(false);
-				console.log('error request get code 2');
-			});
-		}, 59000); });
-
-
-		await page.type('#input_nik.input_sms_code', code.replace('-', ''));
+	try {
+		//login step1
+		await page.waitForSelector('#logowanie-inner-NIK #input_nik');
+		await page.type('#logowanie #input_nik', login);
 		await page.click('[name=loginButton]');
+		//login step1 end
+
+		await page.waitForResponse(response => response.status() === 200);
+		await page.waitFor(3000);
+
+		//login step2
+		let pasT = await page. $('.passwordTable');
+		if (pasT) {
+			console.log(pass);
+
+			const pass2 = pass;
+			let www = await page.evaluate((pass2) => {
+				let arrayPass = pass2.split('');
+				let k = 0;
+				$(".passwordTable input").each(function() {
+					if (arrayPass[k] !== undefined) {
+						$(this).val(arrayPass[k]);
+					}
+					k = k + 1;
+				});
+			}, pass2);
+		} else {
+			await page.waitForSelector('#logowanie #ordinarypin');
+			await page.type('#logowanie #ordinarypin', pass);
+		}
+
+		//if chekbox remember
+		var checkRemamber = await page. $('input[type="checkbox"]');
+		if (checkRemamber) {
+			await page.click('input[type="checkbox"]');
+		}
+		//if chekbox remember
+
+		await page.click('#okBtn2');
+		//login step2 end
+
+		await page.waitForResponse(response => response.status() === 200);
+
+		await page.waitFor(2000);
+
+
+		//if step3
+		let checkRemamber2 = await page. $('.orderProcessWizard input[type="checkbox"]');
+		if (checkRemamber2) {
+			await page.waitForSelector('.orderProcessWizard #confirm-button');
+			await page. $('input[type="checkbox"]');
+			await page.click('.orderProcessWizard input[type="checkbox"]');
+			await page.click('.orderProcessWizard #confirm-button');
+		}
+		//if step3 end
+		await page.waitForResponse(response => response.status() === 200);
+
+		await page.waitFor(6000);
+
+		let inputCode = await page. $('#input_nik.input_sms_code');
+		if (inputCode) {
+			var optionsP = {uri: urlRequest + '&type=1', headers: {'User-Agent': 'Request-Promise'}, json: true};
+		 	rp(optionsP).then(function (repos) {}).catch(function (err) {
+				browser.close();
+		 	  return {status: false};
+		 	});
+
+			let code = ''; //get query - check if insert code
+			let options = {uri: urlRequest + '&type=2', headers: {'User-Agent': 'Request-Promise'}, json: true};
+			await new Promise(function(resolve, reject) { setTimeout(function() {
+				rp(options).then(function (repos) {
+					if (repos.status) {
+						code = repos.code;
+						resolve(true);
+					} else {
+						resolve(false);
+						console.log('error request get code 1');
+					}
+				}).catch(function (err) {
+					resolve(false);
+					console.log('error request get code 2');
+				});
+			}, 59000); });
+
+
+			await page.type('#input_nik.input_sms_code', code.replace('-', ''));
+			await page.click('[name=loginButton]');
+		}
+
+		await page.waitForResponse(response => response.status() === 200);
+
+		await page.waitFor(4000);
+	} catch (e) {
+		return {status:false, message: messageError + ' Login error'};
 	}
 
-	//#wylogowanie .error
+	try {
+		//link to page history
+		await page.waitForSelector('#menu_multichannel_cbt_history');
+		await page.click('#menu_multichannel_cbt_history');
+		//link to page history end
 
-	await page.waitForResponse(response => response.status() === 200);
+		await page.waitForResponse(response => response.status() === 200);
+		await page.waitFor(8000);
 
-	//link to page history
+		await page.evaluate(() => {
+			$('#presetDateSelect').find('input[value="LAST_30_DAYS"]').click();
+		});
 
-	await page.waitFor(4000);
-	console.log('login');
-//	console.log('code');
-	await page.waitForSelector('#menu_multichannel_cbt_history');
-	await page.click('#menu_multichannel_cbt_history');
-	//link to page history end
+		await page.waitFor(8000);
 
-	await page.waitForResponse(response => response.status() === 200);
-	await page.waitFor(8000);
+		let urlRR = __dirname + '/tmp/' + flag;
 
-	await page.evaluate(() => {
-		$('#presetDateSelect').find('input[value="LAST_30_DAYS"]').click();
-	});
+		await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: urlRR});
 
-	await page.waitFor(8000);
-
-	let urlRR = __dirname + '/tmp/' + flag;
-
-	await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: urlRR});
-
-	await page.click('#btn-csv');
-	await page.click('#btn-csv');
-	await page.click('.btn-csv-download');
-	await page.waitFor(5000);
+		await page.click('#btn-csv');
+		await page.click('#btn-csv');
+		await page.click('.btn-csv-download');
+		await page.waitFor(5000);
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Parse data error'};
+	}
 
 	browser.close();
-	return {status:true};
+	return {status:true, message: ''};
 }
 
 
@@ -202,29 +211,37 @@ exports.parseWniski = async (login, pass, email) => {
 
 
 exports.parseCiti = async (login, pass, flag, cardEnd) => {
-	let result = false;
+	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku bankName. Proszę sprawdzić.';
 
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
-	const page = await browser.newPage();
-	await page.goto('https://www.citibankonline.pl/apps/auth/signin/');
-	await page.waitFor(1000);
+	try {
+		const page = await browser.newPage();
+		await page.goto('https://www.citibankonline.pl/apps/auth/signin/');
+		await page.waitFor(1000);
+	} catch (e) {
+		return {status:false, message: messageError + ' Page error'};
+	}
 
-	//login begin
-	await page.waitForSelector('#SignonForm');
-	await page.type('#username_input', login);
-	await page.waitFor(2000);
+	try {
+		//login begin
+		await page.waitForSelector('#SignonForm');
+		await page.type('#username_input', login);
+		await page.waitFor(2000);
 
-	await page.type('#password_input', pass);
-	await page.click('#submit_body');
-	//login end
+		await page.type('#password_input', pass);
+		await page.click('#submit_body');
+		//login end
 
-	await page.waitForResponse(response => response.status() === 200);
-	await page.waitFor(12000);
-	await page.screenshot({path: 'buddy-screenshot.png'});
+		await page.waitForResponse(response => response.status() === 200);
+		await page.waitFor(12000);
+		await page.waitForSelector('#headingTwo');
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Login error'};
+	}
 
-	await page.waitForSelector('#headingTwo');
 	await page.click('#headingTwo');
 
 	await page.waitFor(2000);
@@ -240,7 +257,7 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 
 	if (cardExist == 0) {
 		browser.close();
-		return {status:false};
+		return {status:false, message: messageError + ' Card error'};
 	}
 
 	await page.waitFor(30000);
@@ -248,37 +265,42 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 		$('#paginated-datagrid-body a.ui-grid-search-filter').trigger('click');
 	});
 
-	await page.waitFor(2000);
-	await page.evaluate(() => {
-		$('#durationFilter_input').val(60).change();
-	});
+	try {
+		await page.waitFor(2000);
+		await page.evaluate(() => {
+			$('#durationFilter_input').val(60).change();
+		});
 
-	let urlRR = __dirname + '/tmp/' + flag;
-	//let urlRR = __dirname + '\\tmp\\citi';
-	await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: urlRR});
+		let urlRR = __dirname + '/tmp/' + flag;
+		//let urlRR = __dirname + '\\tmp\\citi';
+		await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: urlRR});
 
-	await page.waitFor(3000);
-	await page.evaluate(() => {
-		$('#subapp-transaction-links a.download-icon-click').trigger('click');
-	});
+		await page.waitFor(3000);
+		await page.evaluate(() => {
+			$('#subapp-transaction-links a.download-icon-click').trigger('click');
+		});
 
-	await page.waitFor(2000);
-	await page.evaluate(() => {
-		$('.popover.bottom #cbol-download-popover-selected').trigger('click');
-	});
+		await page.waitFor(2000);
+		await page.evaluate(() => {
+			$('.popover.bottom #cbol-download-popover-selected').trigger('click');
+		});
 
-	await page.waitFor(2000);
-	await page.evaluate(() => {
-		$('.popover.bottom #cbol-download-popover-list li[id="5"]').trigger('click');
-	});
+		await page.waitFor(2000);
+		await page.evaluate(() => {
+			$('.popover.bottom #cbol-download-popover-list li[id="5"]').trigger('click');
+		});
 
-	await page.waitFor(2000);
-	await page.evaluate(() => {
-		$('.popover.bottom #btnPolish_root #btnPolish_body').trigger('click');
-	});
+		await page.waitFor(2000);
+		await page.evaluate(() => {
+			$('.popover.bottom #btnPolish_root #btnPolish_body').trigger('click');
+		});
 
-	await page.waitFor(10000);
+		await page.waitFor(10000);
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Parse data error'};
+	}
 
 	browser.close();
-	return {status:true};
+	return {status:true, message: ''};
 }
