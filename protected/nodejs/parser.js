@@ -231,15 +231,17 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 	await page.waitForSelector('#subCCAccordion');
 
 	let cardExist = await page.evaluate((strCard) => {
-		console.log($('#subCCAccordion h5:contains("' + strCard + '")').length)
-		console.log(strCard)
 		if ($('#subCCAccordion h5:contains("' + strCard + '")').length) {
-			console.log('exist')
 			$('h5:contains("' + strCard + '")').trigger('click');
 			return 1;
 		}
 		return 0;
 	}, cardEnd);
+
+	if (cardExist == 0) {
+		browser.close();
+		return {status:false};
+	}
 
 	await page.waitFor(30000);
 	await page.evaluate(() => {
