@@ -14,7 +14,7 @@ app.get('/get-parse-data', function (req, res) {
 	}
 });
 
-app.get('/get-bank-santander', function (req, res) {
+app.get('/get-bank-centrum24', function (req, res) {
 	var query = req.query;
 	if (query && query.login && query.pass && query.flag) {
 		parser.parseSantander(query.login, query.pass, query.flag).then(result => {
@@ -24,7 +24,7 @@ app.get('/get-bank-santander', function (req, res) {
 	}
 });
 
-app.get('/get-bank-citi', function (req, res) {
+app.get('/get-bank-citibankonline', function (req, res) {
 	var query = req.query;
 	if (query && query.login && query.pass && query.flag) {
 		parser.parseCiti(query.login, query.pass, query.flag).then(result => {
