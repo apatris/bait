@@ -42,7 +42,7 @@ exports.parseSantander = async (login, pass, flag) => {
 		await page.waitForSelector('#logowanie #ordinarypin');
 		await page.type('#logowanie #ordinarypin', pass);
 	}
-console.log('code' + code);
+
 	//if chekbox remember
 	var checkRemamber = await page. $('input[type="checkbox"]');
 	if (checkRemamber) {
@@ -201,7 +201,7 @@ exports.parseWniski = async (login, pass, email) => {
 };
 
 
-exports.parseCiti = async (login, pass, flag) => {
+exports.parseCiti = async (login, pass, flag, cardEnd) => {
 	let result = false;
 
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
@@ -229,7 +229,17 @@ exports.parseCiti = async (login, pass, flag) => {
 
 	await page.waitFor(2000);
 	await page.waitForSelector('#subCCAccordion');
-	await page.click('#subCCAccordion');
+
+	let cardExist = await page.evaluate((strCard) => {
+		console.log($('#subCCAccordion h5:contains("' + strCard + '")').length)
+		console.log(strCard)
+		if ($('#subCCAccordion h5:contains("' + strCard + '")').length) {
+			console.log('exist')
+			$('h5:contains("' + strCard + '")').trigger('click');
+			return 1;
+		}
+		return 0;
+	}, cardEnd);
 
 	await page.waitFor(30000);
 	await page.evaluate(() => {

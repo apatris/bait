@@ -26,8 +26,9 @@ app.get('/get-bank-centrum24', function (req, res) {
 
 app.get('/get-bank-citibankonline', function (req, res) {
 	var query = req.query;
-	if (query && query.login && query.pass && query.flag) {
-		parser.parseCiti(query.login, query.pass, query.flag).then(result => {
+	if (query && query.login && query.pass && query.flag && query.card) {
+		let cardEnd = query.card;
+		parser.parseCiti(query.login, query.pass, query.flag, cardEnd.substr(cardEnd.length - 4)).then(result => {
 			res.write(JSON.stringify(result));
 			res.end();
 		}) ;
