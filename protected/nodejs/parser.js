@@ -2,21 +2,17 @@ const puppeteer = require('puppeteer');
 var rp = require('request-promise');
 
 exports.parseSantander = async (login, pass, flag) => {
-	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku bankName. Proszę sprawdzić.';
+	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku %bankName%. Proszę sprawdzić.';
 	let urlRequest = 'https://e.apatris.pl/mod/api/request-sms?token=bank-token&flag=' + flag;
 
-	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+//	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
+	const page = await browser.newPage();
 	try {
-		const page = await browser.newPage();
 		await page.goto('https://www.centrum24.pl/centrum24-web/login');
 		await page.waitFor(1000);
-	} catch (e) {
-		return {status:false, message: messageError + ' Page error'};
-	}
 
-	try {
 		//login step1
 		await page.waitForSelector('#logowanie-inner-NIK #input_nik');
 		await page.type('#logowanie #input_nik', login);
@@ -29,8 +25,6 @@ exports.parseSantander = async (login, pass, flag) => {
 		//login step2
 		let pasT = await page. $('.passwordTable');
 		if (pasT) {
-			console.log(pass);
-
 			const pass2 = pass;
 			let www = await page.evaluate((pass2) => {
 				let arrayPass = pass2.split('');
@@ -58,9 +52,7 @@ exports.parseSantander = async (login, pass, flag) => {
 		//login step2 end
 
 		await page.waitForResponse(response => response.status() === 200);
-
 		await page.waitFor(2000);
-
 
 		//if step3
 		let checkRemamber2 = await page. $('.orderProcessWizard input[type="checkbox"]');
@@ -104,23 +96,24 @@ exports.parseSantander = async (login, pass, flag) => {
 			await page.type('#input_nik.input_sms_code', code.replace('-', ''));
 			await page.click('[name=loginButton]');
 		}
-
-		await page.waitForResponse(response => response.status() === 200);
-
-		await page.waitFor(4000);
 	} catch (e) {
-		return {status:false, message: messageError + ' Login error'};
+		return {status:true, message: messageError + ' Login Error'};
 	}
 
+	//#wylogowanie .error
+
+	await page.waitForResponse(response => response.status() === 200);
+	await page.waitFor(4000);
+
+	//link to page history
+	await page.waitForSelector('#menu_multichannel_cbt_history');
+	await page.click('#menu_multichannel_cbt_history');
+	//link to page history end
+
+	await page.waitForResponse(response => response.status() === 200);
+	await page.waitFor(8000);
+
 	try {
-		//link to page history
-		await page.waitForSelector('#menu_multichannel_cbt_history');
-		await page.click('#menu_multichannel_cbt_history');
-		//link to page history end
-
-		await page.waitForResponse(response => response.status() === 200);
-		await page.waitFor(8000);
-
 		await page.evaluate(() => {
 			$('#presetDateSelect').find('input[value="LAST_30_DAYS"]').click();
 		});
@@ -136,12 +129,11 @@ exports.parseSantander = async (login, pass, flag) => {
 		await page.click('.btn-csv-download');
 		await page.waitFor(5000);
 	} catch (e) {
-		browser.close();
-		return {status:false, message: messageError + ' Parse data error'};
+		return {status:true, message: messageError + ' Parse Error'};
 	}
 
 	browser.close();
-	return {status:true, message: ''};
+	return {status:true, message:''};
 }
 
 
@@ -211,20 +203,16 @@ exports.parseWniski = async (login, pass, email) => {
 
 
 exports.parseCiti = async (login, pass, flag, cardEnd) => {
-	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku bankName. Proszę sprawdzić.';
+	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku %bankName%. Proszę sprawdzić.';
 
-	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+	//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
-	try {
-		const page = await browser.newPage();
+	const page = await browser.newPage();
+	try{
 		await page.goto('https://www.citibankonline.pl/apps/auth/signin/');
 		await page.waitFor(1000);
-	} catch (e) {
-		return {status:false, message: messageError + ' Page error'};
-	}
 
-	try {
 		//login begin
 		await page.waitForSelector('#SignonForm');
 		await page.type('#username_input', login);
@@ -233,18 +221,18 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 		await page.type('#password_input', pass);
 		await page.click('#submit_body');
 		//login end
-
-		await page.waitForResponse(response => response.status() === 200);
-		await page.waitFor(12000);
-		await page.waitForSelector('#headingTwo');
 	} catch (e) {
-		browser.close();
-		return {status:false, message: messageError + ' Login error'};
+		return {status:false, message: messageError + ' Login Error'};
 	}
 
+	await page.waitForResponse(response => response.status() === 200);
+	await page.waitFor(12000);
+
+	await page.waitForSelector('#headingTwo');
 	await page.click('#headingTwo');
 
 	await page.waitFor(2000);
+
 	await page.waitForSelector('#subCCAccordion');
 
 	let cardExist = await page.evaluate((strCard) => {
@@ -257,15 +245,15 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 
 	if (cardExist == 0) {
 		browser.close();
-		return {status:false, message: messageError + ' Card error'};
+		return {status:false, message: messageError + ' Card Error'};
 	}
 
-	await page.waitFor(30000);
-	await page.evaluate(() => {
-		$('#paginated-datagrid-body a.ui-grid-search-filter').trigger('click');
-	});
-
 	try {
+		await page.waitFor(30000);
+		await page.evaluate(() => {
+			$('#paginated-datagrid-body a.ui-grid-search-filter').trigger('click');
+		});
+
 		await page.waitFor(2000);
 		await page.evaluate(() => {
 			$('#durationFilter_input').val(60).change();
@@ -297,10 +285,9 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 
 		await page.waitFor(10000);
 	} catch (e) {
-		browser.close();
-		return {status:false, message: messageError + ' Parse data error'};
+		return {status:false, message: messageError + ' Parse Error'};
 	}
 
 	browser.close();
-	return {status:true, message: ''};
+	return {status:true};
 }
