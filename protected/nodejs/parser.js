@@ -97,6 +97,7 @@ exports.parseSantander = async (login, pass, flag) => {
 			await page.click('[name=loginButton]');
 		}
 	} catch (e) {
+		browser.close();
 		return {status:true, message: messageError + ' Login Error'};
 	}
 
@@ -129,6 +130,7 @@ exports.parseSantander = async (login, pass, flag) => {
 		await page.click('.btn-csv-download');
 		await page.waitFor(5000);
 	} catch (e) {
+		browser.close();
 		return {status:true, message: messageError + ' Parse Error'};
 	}
 
@@ -195,9 +197,8 @@ exports.parseWniski = async (login, pass, email) => {
 
 			resDataTds.push(td.title + (textTd2 ? '||' + textTd2.trim() + '###' : ''));
 		}
+
 		browser.close();
-
-
 		return {result:'parse_complete>>>' + headerText + '::' + resDataTds.join('###')};
 };
 
@@ -222,6 +223,7 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 		await page.click('#submit_body');
 		//login end
 	} catch (e) {
+		browser.close();
 		return {status:false, message: messageError + ' Login Error'};
 	}
 
@@ -285,6 +287,7 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 
 		await page.waitFor(10000);
 	} catch (e) {
+		browser.close();
 		return {status:false, message: messageError + ' Parse Error'};
 	}
 
