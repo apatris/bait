@@ -205,12 +205,13 @@ exports.parseWniski = async (login, pass, email) => {
 
 exports.parseCiti = async (login, pass, flag, cardEnd) => {
 	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku %bankName%. Proszę sprawdzić.';
+	let urlRequest = 'https://e.apatris.pl/mod/api/request-sms?token=bank-token&flag=' + flag;
 
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+//	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
-	try{
+	// try{
 		await page.goto('https://www.citibankonline.pl/apps/auth/signin/');
 		await page.waitFor(1000);
 
@@ -222,13 +223,53 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 		await page.type('#password_input', pass);
 		await page.click('#submit_body');
 		//login end
-	} catch (e) {
-		browser.close();
-		return {status:false, message: messageError + ' Login Error'};
-	}
+	// } catch (e) {
+	// 	browser.close();
+	// 	return {status:false, message: messageError + ' Login Error'};
+	// }
 
 	await page.waitForResponse(response => response.status() === 200);
 	await page.waitFor(12000);
+
+
+	let inputCode = await page. $('#otpInputTextFP_root input[name=otpInputTextFP]');
+	if (inputCode) {
+			var optionsP = {uri: urlRequest + '&type=1', headers: {'User-Agent': 'Request-Promise'}, json: true};
+			rp(optionsP).then(function (repos) {}).catch(function (err) {
+				browser.close();
+				return {status: false};
+			});
+
+			//await page.waitFor(20000);
+
+			let code = ''; //get query - check if insert code
+			let options = {uri: urlRequest + '&type=2', headers: {'User-Agent': 'Request-Promise'}, json: true};
+			await new Promise(function(resolve, reject) { setTimeout(function() {
+				rp(options).then(function (repos) {
+					if (repos.status) {
+						code = repos.code;
+						resolve(true);
+					} else {
+						resolve(false);
+						console.log('error request get code 1');
+					}
+				}).catch(function (err) {
+					resolve(false);
+					console.log('error request get code 2');
+				});
+			}, 80000); });
+
+			if (code == '') {
+				browser.close();
+				return {status:true, message: messageError + ' sms Error'};
+			}
+			await page.type('#otpInputTextFP_root input[name=otpInputTextFP]', code.replace('-', ''));
+			await page.click('#cookieAcceptBtn');
+
+			//await page.waitForResponse(response => response.status() === 200);
+			await page.waitFor(8000);
+			await page.waitForSelector('#headingTwo');
+	}
 
 	await page.waitForSelector('#headingTwo');
 	await page.click('#headingTwo');
