@@ -261,7 +261,7 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 
 			if (code == '') {
 				browser.close();
-				return {status:true, message: messageError + ' sms Error'};
+				return {status:false, message: messageError + ' sms Error'};
 			}
 			await page.type('#otpInputTextFP_root input[name=otpInputTextFP]', code.replace('-', ''));
 			await page.click('#cookieAcceptBtn');
