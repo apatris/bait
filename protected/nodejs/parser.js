@@ -1,5 +1,7 @@
 const puppeteer = require('puppeteer');
 var rp = require('request-promise');
+const fs = require('fs');
+const path = require('path');
 
 exports.parseSantander = async (login, pass, flag) => {
 	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku %bankName%. Proszę sprawdzić.';
@@ -302,9 +304,20 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 			$('#durationFilter_input').val(60).change();
 		});
 
-		let urlRR = __dirname + '/tmp/' + flag;
-		//let urlRR = __dirname + '\\tmp\\citi';
-		await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: urlRR});
+
+		const directory = __dirname + '/tmp/' + flag;
+		fs.readdir(directory, (err, files) => {
+		  if (err) throw err;
+
+		  for (const file of files) {
+		    fs.unlink(path.join(directory, file), err => {
+		      if (err) throw err;
+		    });
+		  }
+		});
+
+		//let directory = __dirname + '\\tmp\\citi';
+		await page._client.send('Page.setDownloadBehavior', {behavior: 'allow', downloadPath: directory});
 
 		await page.waitFor(3000);
 		await page.evaluate(() => {
