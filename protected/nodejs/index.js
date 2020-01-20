@@ -3,6 +3,7 @@ var app = express();
 var parser = require('./parser');
 var fs = require('fs');
 var path = require('path');
+const objectsToCsv = require('objects-to-csv');
 
 app.get('/get-parse-data', function (req, res) {
 	var query = req.query;
@@ -64,6 +65,31 @@ app.get('/get-bank-files', function (req, res) {
 	}
 
 	res.write(JSON.stringify(resultG));
+	res.end();
+});
+
+app.get('/times', async function (req, res) {
+	let login = 'glogr@me.com';
+	let pass = '7801';
+	const results = [];
+
+	const postsList = await parser.parserTimes(login, pass);
+	if (postsList.data) {
+		let k = 0;
+		for(const a of postsList.data) {
+			if (k < 5) {
+				const postData = await parser.parserTime(a.link, login);
+				if (postData) {
+					results.push(postData);
+					k = k + 1;
+				}
+			}
+		}
+	}
+
+	res.write(JSON.stringify(results));
+	new objectsToCsv(results).toDisk('./tmp/resData.csv', { append: true, allColumns: true });
+
 	res.end();
 });
 

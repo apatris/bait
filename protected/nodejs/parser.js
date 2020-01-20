@@ -145,8 +145,8 @@ exports.parseSantander = async (login, pass, flag) => {
 
 exports.parseWniski = async (login, pass, email) => {
 	//try {
-		const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050']});
-		//const browser = await puppeteer.launch({headless: false});
+		//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050']});
+		const browser = await puppeteer.launch({headless: false});
 		const page = await browser.newPage();
 
 		await page.goto('https://wnioski.mazowieckie.pl/MuwWsc/PL');
@@ -347,4 +347,108 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 
 	browser.close();
 	return {status:true};
+}
+
+exports.parserTime = async (link, login) => {
+	try {
+		const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+		const page = await browser.newPage();
+
+		const viewPort={width:1280, height:960}
+	 	await page.setViewport(viewPort);
+
+		await page.goto(link);
+		await page.waitFor(2000);
+
+		await page.click('table.mng td a.x-ob-cd');
+		await page.waitFor(6000);
+
+		let eEmail = await page.$("#modalData table a");
+		let mEmailT = await page.evaluate(eEmail => eEmail.textContent, eEmail);
+
+		let data = await page.evaluate((emailT) => {
+				return {
+					title: $('.page-wrapper h1').text(),
+					time: $('.lead:eq(0) span:first').text(),
+					address: $('.lead:eq(1)').text(),
+					contact: emailT,
+				};
+		}, mEmailT);
+		console.log(data)
+
+		browser.close();
+		return data;
+	} catch (e) {
+		browser.close();
+		return null;
+	}
+}
+
+exports.parserTimes = async (login, pass) => {
+
+	async function autoScroll(page) {
+    await page.evaluate(async () => {
+        await new Promise((resolve, reject) => {
+            var totalHeight = 0;
+            var distance = 100;
+            var timer = setInterval(() => {
+                var scrollHeight = document.body.scrollHeight;
+                window.scrollBy(0, distance);
+                totalHeight += distance;
+
+                if(totalHeight >= scrollHeight){
+                    clearInterval(timer);
+                    resolve();
+                }
+            }, 300);
+        });
+    });
+	}
+
+	//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+
+	const page = await browser.newPage();
+	const viewPort={width:1280, height:960}
+ 	await page.setViewport(viewPort);
+
+	await page.goto('https://10times.com/events');
+	await page.waitFor(2000);
+
+	await page.waitForSelector('.btn[data-id=today]');
+	await page.click('.btn[data-id=today]');
+
+	await page.waitForResponse(response => response.status() === 200);
+	await page.waitFor(5000);
+
+	let inputCode = await page. $('#loginHide.x-thm');
+	if (inputCode) {
+		console.log('input code')
+		await page.click('#loginHide.x-thm');
+		await page.waitFor(6000);
+
+		await page.waitForSelector('#modalData #userEmail')
+	  await page.type('#modalData #userEmail', login);
+
+		await page.waitFor(2000);
+		await page.click('#modalData .btn.x-na');
+
+		await page.waitFor(2000);
+		await page.waitForSelector('#modalData #userPassword')
+		await page.type('#modalData #userPassword', pass);
+
+		await page.waitFor(2000);
+		await page.click('#modalData .btn.x-na');
+
+		await page.waitFor(5000);
+	}
+	await autoScroll(page);
+
+	const listA = await page.$$eval('.listing.text-muted tr.box h2 a', listA => listA.map((a) => {
+		let text = a.textContent;
+		return {title:text.trim(), link: a.getAttribute("href")};
+	}));
+
+		browser.close();
+		return {data:listA};
 }
