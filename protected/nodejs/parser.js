@@ -380,7 +380,6 @@ exports.parserTime = async (link, login) => {
 		browser.close();
 		return data;
 	} catch (e) {
-		browser.close();
 		return null;
 	}
 }
