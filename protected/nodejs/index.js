@@ -4,6 +4,41 @@ var parser = require('./parser');
 var fs = require('fs');
 var path = require('path');
 const objectsToCsv = require('objects-to-csv');
+var cron = require('node-cron');
+
+cron.schedule('* * * * *', async function () {
+	var date = new Date();
+	var hours = date.getHours();
+	var minutes = date.getMinutes();
+	if ((hours == 7) && (minutes == 1)) {
+
+		fs.writeFile('test.txt', '', function (err) { if (err) throw err; });
+		const postsList = await parser.parserTimes();
+		fs.writeFile('test.txt', JSON.stringify(postsList.data), function (err) { if (err) throw err; });
+
+	} else if ((hours > 7) || ((hours == 7) && (minutes > 20))) {
+		let file = fs.readFileSync('test.txt', 'utf8');
+		if (file && (obj = JSON.parse(file))) {
+			if (obj[0].link) {
+				let link = obj[0].link;
+				obj.splice(0, 1);
+
+				fs.writeFile('test.txt', JSON.stringify(obj), function (err) { if (err) throw err; });
+
+				const postData = await parser.parserTime(link);
+				if (postData) {
+					new objectsToCsv([postData]).toDisk('./tmp/resData.csv', { append: true, allColumns: true });
+				}
+			}
+		}
+	}
+});
+
+app.get('/run-parser-10-times', async function (req, res) {
+	fs.writeFile('test.txt', '', function (err) { if (err) throw err; });
+	const postsList = await parser.parserTimes();
+	fs.writeFile('test.txt', JSON.stringify(postsList.data), function (err) { if (err) throw err; });
+})
 
 app.get('/get-parse-data', function (req, res) {
 	var query = req.query;
@@ -65,27 +100,6 @@ app.get('/get-bank-files', function (req, res) {
 	}
 
 	res.write(JSON.stringify(resultG));
-	res.end();
-});
-
-app.get('/times', async function (req, res) {
-	let login = 'glogr@me.com';
-	let pass = '7801';
-	const results = [];
-
-	const postsList = await parser.parserTimes(login, pass);
-	if (postsList.data) {
-		for(const a of postsList.data) {
-				const postData = await parser.parserTime(a.link, login);
-				if (postData) {
-					new objectsToCsv(postData).toDisk('./tmp/resData.csv', { append: true, allColumns: true });
-					results.push(postData);
-				}
-		}
-	}
-
-	res.write(JSON.stringify(results));
-
 	res.end();
 });
 

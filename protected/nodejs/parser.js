@@ -145,8 +145,8 @@ exports.parseSantander = async (login, pass, flag) => {
 
 exports.parseWniski = async (login, pass, email) => {
 	//try {
-		//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050']});
-		const browser = await puppeteer.launch({headless: false});
+		const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050']});
+		//const browser = await puppeteer.launch({headless: false});
 		const page = await browser.newPage();
 
 		await page.goto('https://wnioski.mazowieckie.pl/MuwWsc/PL');
@@ -349,12 +349,12 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 	return {status:true};
 }
 
-exports.parserTime = async (link, login) => {
+exports.parserTime = async (link) => {
+	let login = 'glogr@me.com';
+	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+	const page = await browser.newPage();
 	try {
-		const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-		//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
-		const page = await browser.newPage();
-
 		const viewPort={width:1280, height:960}
 		await page.setViewport(viewPort);
 
@@ -386,7 +386,7 @@ exports.parserTime = async (link, login) => {
 
 							var dateP1 = new Date(d1);
 							if (dateP1 != 'Invalid Date') {
-								var monthPP1 = '' + (dateP1.getMonth() + 1);
+								var monthP1 = '' + (dateP1.getMonth() + 1);
 								var dayP1 = '' + dateP1.getDate();
 								var yearP1 = dateP1.getFullYear();
 								var resDate1 = dayP1 + '.' + monthP1 + '.' + yearP1;
@@ -440,11 +440,14 @@ exports.parserTime = async (link, login) => {
 		browser.close();
 		return data;
 	} catch (e) {
+		browser.close();
 		return null;
 	}
 }
 
-exports.parserTimes = async (login, pass) => {
+exports.parserTimes = async () => {
+	let login = 'glogr@me.com';
+	let pass = '7801';
 
 	async function autoScroll(page) {
     await page.evaluate(async () => {
@@ -509,5 +512,6 @@ exports.parserTimes = async (login, pass) => {
 	}));
 
 	browser.close();
+	console.log('end')
 	return {data:listA};
 }
