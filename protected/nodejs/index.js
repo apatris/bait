@@ -78,13 +78,13 @@ app.get('/times', async function (req, res) {
 		for(const a of postsList.data) {
 				const postData = await parser.parserTime(a.link, login);
 				if (postData) {
+					new objectsToCsv(postData).toDisk('./tmp/resData.csv', { append: true, allColumns: true });
 					results.push(postData);
 				}
 		}
 	}
 
 	res.write(JSON.stringify(results));
-	new objectsToCsv(results).toDisk('./tmp/resData.csv', { append: true, allColumns: true });
 
 	res.end();
 });
