@@ -73,7 +73,6 @@ app.get('/times', async function (req, res) {
 	let pass = '7801';
 	const results = [];
 
-	const postsList = await parser.parserTimes(login, pass);
 	if (postsList.data) {
 		for(const a of postsList.data) {
 				const postData = await parser.parserTime(a.link, login);
