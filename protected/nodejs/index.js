@@ -10,6 +10,7 @@ cron.schedule('* * * * *', async function () {
 	var date = new Date();
 	var hours = date.getHours();
 	var minutes = date.getMinutes();
+	console.log(minutes)
 	if ((hours == 7) && (minutes == 1)) {
 
 		fs.writeFile('test.txt', '', function (err) { if (err) throw err; });
