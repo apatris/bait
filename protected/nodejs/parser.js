@@ -405,8 +405,8 @@ exports.parserTimes = async (login, pass) => {
     });
 	}
 
-	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+	//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
 	const viewPort={width:1280, height:960}
@@ -449,6 +449,6 @@ exports.parserTimes = async (login, pass) => {
 		return {title:text.trim(), link: a.getAttribute("href")};
 	}));
 
-		browser.close();
-		return {data:listA};
+	browser.close();
+	return {data:listA};
 }
