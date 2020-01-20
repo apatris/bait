@@ -356,7 +356,7 @@ exports.parserTime = async (link, login) => {
 		const page = await browser.newPage();
 
 		const viewPort={width:1280, height:960}
-	 	await page.setViewport(viewPort);
+		await page.setViewport(viewPort);
 
 		await page.goto(link);
 		await page.waitFor(2000);
@@ -368,14 +368,74 @@ exports.parserTime = async (link, login) => {
 		let mEmailT = await page.evaluate(eEmail => eEmail.textContent, eEmail);
 
 		let data = await page.evaluate((emailT) => {
+				var textS = $('#editionid').html();
+				var re = /\s*<br>\s*/
+				var tagList = textS.split(re);
+				var datesList = [];
+				for (const tlist of tagList) {
+						var dateP = tlist.split(' - ');
+						var d1 = dateP[0];
+						var d2 = dateP[1];
+
+						var dateP2 = new Date(d2);
+						if (dateP2 != 'Invalid Date') {
+							var monthP2 = '' + (dateP2.getMonth() + 1);
+							var dayP2 = '' + dateP2.getDate();
+							var yearP2 = dateP2.getFullYear();
+							var resDate2 = dayP2 + '.' + monthP2 + '.' + yearP2;
+
+							var dateP1 = new Date(d1);
+							if (dateP1 != 'Invalid Date') {
+								var monthPP1 = '' + (dateP1.getMonth() + 1);
+								var dayP1 = '' + dateP1.getDate();
+								var yearP1 = dateP1.getFullYear();
+								var resDate1 = dayP1 + '.' + monthP1 + '.' + yearP1;
+							} else {
+								var dateP1 = new Date(yearP2 + '-' + monthP2 + '-' + parseInt(d1));
+								var monthP1 = '' + (dateP1.getMonth() + 1);
+								var dayP1 = '' + dateP1.getDate();
+								var yearP1 = dateP1.getFullYear();
+								var resDate1 = dayP1 + '.' + monthP1 + '.' + yearP1;
+							}
+							datesList.push(resDate1 + '-' + resDate2);
+						}
+				}
+
+				var tagList2 = datesList.join('; ');
+
+				var category1 = $("#hvrout2").clone().children().remove().end().text();
+				var category2 = $("#hvrout2 a").text();
+
+				var textS2 = $("#hvrout3 td").clone().children().remove().end().text();
+				var re = /\s*\n\s*/
+				var tagList = textS2.split(re);
+				var frequency = '';
+				if (tagList.length >= 1) {
+					frequency = tagList[tagList.length - 1];
+				}
+
+				var date1 = new Date($('.lead:eq(0) span:first').attr('content')),
+		         month1 = '' + (date1.getMonth() + 1),
+		         day1 = '' + date1.getDate(),
+		         year1 = date1.getFullYear();
+
+				var date2 = new Date($('.lead:eq(0) span:eq(1)').attr('content')),
+				    month2 = '' + (date2.getMonth() + 1),
+				    day2 = '' + date2.getDate(),
+				    year2 = date2.getFullYear();
+
 				return {
 					title: $('.page-wrapper h1').text(),
-					time: $('.lead:eq(0) span:first').text(),
+					date1: day1 + '.' + (month1 < 10 ? '0' + month1 : month1) + '.' + year1,
+					date2: day2 + '.' + (month2 < 10 ? '0' + month2 : month1) + '.' + year1,
 					address: $('.lead:eq(1)').text(),
 					contact: emailT,
+					categories: category1 + '; ' + category2,
+					frequency: frequency.trim(),
+					dates: tagList2.trim(),
 				};
 		}, mEmailT);
-		console.log(data)
+		console.log(data);
 
 		browser.close();
 		return data;
@@ -405,8 +465,8 @@ exports.parserTimes = async (login, pass) => {
     });
 	}
 
-	//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
 	const viewPort={width:1280, height:960}
@@ -423,7 +483,6 @@ exports.parserTimes = async (login, pass) => {
 
 	let inputCode = await page. $('#loginHide.x-thm');
 	if (inputCode) {
-		console.log('input code')
 		await page.click('#loginHide.x-thm');
 		await page.waitFor(6000);
 

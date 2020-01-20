@@ -75,15 +75,11 @@ app.get('/times', async function (req, res) {
 
 	const postsList = await parser.parserTimes(login, pass);
 	if (postsList.data) {
-		let k = 0;
 		for(const a of postsList.data) {
-			if (k < 5) {
 				const postData = await parser.parserTime(a.link, login);
 				if (postData) {
 					results.push(postData);
-					k = k + 1;
 				}
-			}
 		}
 	}
 
