@@ -109,8 +109,15 @@ exports.parseSantander = async (login, pass, flag) => {
 	await page.waitFor(4000);
 
 	//link to page history
-	await page.waitForSelector('#menu_multichannel_cbt_history');
-	await page.click('#menu_multichannel_cbt_history');
+	let bHistory = await page. $('#menu_multichannel_cbt_history');
+	let bHistory2 = await page. $('#menu_multichannel_your_finances');
+	if (bHistory) {
+		await page.waitForSelector('#menu_multichannel_cbt_history');
+		await page.click('#menu_multichannel_cbt_history');
+	} else if (bHistory2) {
+		await page.waitForSelector('#menu_multichannel_your_finances');
+		await page.click('#menu_multichannel_your_finances');
+	}
 	//link to page history end
 
 	await page.waitForResponse(response => response.status() === 200);
