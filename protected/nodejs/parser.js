@@ -440,6 +440,7 @@ exports.parserTime = async (link) => {
 		browser.close();
 		return data;
 	} catch (e) {
+		console.log('error');
 		browser.close();
 		return null;
 	}
