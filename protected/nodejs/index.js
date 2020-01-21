@@ -44,11 +44,10 @@ cron.schedule('* * * * *', async function () {
 });
 
 app.get('/run-parser-10-times', async function (req, res) {
-	const postData = await parser.parserTime('https://10times.com/dgexpo');
-	console.log(postData);
-	// fs.writeFile('test.txt', '', function (err) { if (err) throw err; });
-	// const postsList = await parser.parserTimes();
-	// fs.writeFile('test.txt', JSON.stringify(postsList.data), function (err) { if (err) throw err; });
+	// const postData = await parser.parserTime('https://10times.com/lineapell');
+	fs.writeFile('test.txt', '', function (err) { if (err) throw err; });
+	const postsList = await parser.parserTimes();
+	fs.writeFile('test.txt', JSON.stringify(postsList.data), function (err) { if (err) throw err; });
 })
 
 app.get('/get-parse-data', function (req, res) {

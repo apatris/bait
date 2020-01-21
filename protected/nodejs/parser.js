@@ -353,7 +353,7 @@ exports.parserTime = async (link, account) => {
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + account.login});
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + account.login});
 	const page = await browser.newPage();
-	// try {
+	try {
 		const viewPort={width:1280, height:960}
 		await page.setViewport(viewPort);
 
@@ -471,11 +471,11 @@ exports.parserTime = async (link, account) => {
 
 		browser.close();
 		return data;
-	// } catch (e) {
-	// 	console.log('error');
-	// 	browser.close();
-	// 	return null;
-	// }
+	} catch (e) {
+		console.log('error');
+		browser.close();
+		return null;
+	}
 }
 
 exports.parserTimes = async () => {
