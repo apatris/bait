@@ -10,6 +10,7 @@ cron.schedule('* * * * *', async function () {
 	var date = new Date();
 	var hours = date.getHours();
 	var minutes = date.getMinutes();
+	var wDay = date.getDay()
 	console.log(hours + ':' + minutes)
 	if ((hours == 7) && (minutes == 1)) {
 
@@ -18,17 +19,24 @@ cron.schedule('* * * * *', async function () {
 		fs.writeFile('test.txt', JSON.stringify(postsList.data), function (err) { if (err) throw err; });
 
 	} else if ((hours > 7) || ((hours == 7) && (minutes > 20))) {
-		let file = fs.readFileSync('test.txt', 'utf8');
-		if (file && (obj = JSON.parse(file))) {
-			if (obj[0].link) {
-				let link = obj[0].link;
-				obj.splice(0, 1);
+		if(minutes % 3 == 0) {
+			let account = {login:'glogr@me.com', pass:'7801'};
+			if (wDay % 2 == 0) {
+				account = {login:'datsivStepan@gmail.com', pass:'dats29'}
+			}
+			let file = fs.readFileSync('test.txt', 'utf8');
+			if (file && (obj = JSON.parse(file))) {
+				let firstPost = obj[0];
+				if (firstPost && firstPost.link) {
+					let link = firstPost.link;
+					obj.splice(0, 1);
 
-				fs.writeFile('test.txt', JSON.stringify(obj), function (err) { if (err) throw err; });
+					fs.writeFile('test.txt', JSON.stringify(obj), function (err) { if (err) throw err; });
 
-				const postData = await parser.parserTime(link);
-				if (postData) {
-					new objectsToCsv([postData]).toDisk('./tmp/resData.csv', { append: true, allColumns: true });
+					const postData = await parser.parserTime(link, account);
+					if (postData) {
+						new objectsToCsv([postData]).toDisk('./tmp/resData.csv', { append: true, allColumns: true });
+					}
 				}
 			}
 		}
@@ -36,9 +44,11 @@ cron.schedule('* * * * *', async function () {
 });
 
 app.get('/run-parser-10-times', async function (req, res) {
-	fs.writeFile('test.txt', '', function (err) { if (err) throw err; });
-	const postsList = await parser.parserTimes();
-	fs.writeFile('test.txt', JSON.stringify(postsList.data), function (err) { if (err) throw err; });
+	const postData = await parser.parserTime('https://10times.com/dgexpo');
+	console.log(postData);
+	// fs.writeFile('test.txt', '', function (err) { if (err) throw err; });
+	// const postsList = await parser.parserTimes();
+	// fs.writeFile('test.txt', JSON.stringify(postsList.data), function (err) { if (err) throw err; });
 })
 
 app.get('/get-parse-data', function (req, res) {

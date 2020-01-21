@@ -349,59 +349,87 @@ exports.parseCiti = async (login, pass, flag, cardEnd) => {
 	return {status:true};
 }
 
-exports.parserTime = async (link) => {
-	let login = 'glogr@me.com';
+exports.parserTime = async (link, account) => {
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + account.login});
 	const page = await browser.newPage();
-	try {
+	// try {
 		const viewPort={width:1280, height:960}
 		await page.setViewport(viewPort);
 
 		await page.goto(link);
 		await page.waitFor(2000);
 
+		let loginhide = await page. $('#loginHide.x-thm');
+		if (loginhide) {
+			await page.click('#loginHide.x-thm');
+			await page.waitFor(6000);
+
+			await page.waitForSelector('#modalData #userEmail')
+		  await page.type('#modalData #userEmail', account.login);
+
+			await page.waitFor(2000);
+			await page.click('#modalData .btn.x-na');
+
+			await page.waitFor(2000);
+			await page.waitForSelector('#modalData #userPassword')
+			await page.type('#modalData #userPassword', account.pass);
+
+			await page.waitFor(2000);
+			await page.click('#modalData .btn.x-na');
+
+			await page.waitFor(5000);
+		}
+		await page.waitFor(2000);
+
 		await page.click('table.mng td a.x-ob-cd');
 		await page.waitFor(6000);
 
 		let eEmail = await page.$("#modalData table a");
-		let mEmailT = await page.evaluate(eEmail => eEmail.textContent, eEmail);
+		let mEmailT = '';
+		if (eEmail) {
+			mEmailT = await page.evaluate(eEmail => eEmail.textContent, eEmail);
+		}
 
 		let data = await page.evaluate((emailT) => {
 				var textS = $('#editionid').html();
-				var re = /\s*<br>\s*/
-				var tagList = textS.split(re);
-				var datesList = [];
-				for (const tlist of tagList) {
-						var dateP = tlist.split(' - ');
-						var d1 = dateP[0];
-						var d2 = dateP[1];
+				var tagList2 = '';
+				if ($('#editionid').length) {
+					var re = /\s*<br>\s*/
+					var tagList = textS.split(re);
+					var datesList = [];
+					for (const tlist of tagList) {
+							var dateP = tlist.split(' - ');
+							var d1 = dateP[0];
+							var d2 = dateP[1];
 
-						var dateP2 = new Date(d2);
-						if (dateP2 != 'Invalid Date') {
-							var monthP2 = '' + (dateP2.getMonth() + 1);
-							var dayP2 = '' + dateP2.getDate();
-							var yearP2 = dateP2.getFullYear();
-							var resDate2 = dayP2 + '.' + monthP2 + '.' + yearP2;
+							var dateP2 = new Date(d2);
+							if (dateP2 != 'Invalid Date') {
+								var monthP2 = '' + (dateP2.getMonth() + 1);
+								var dayP2 = '' + dateP2.getDate();
+								var yearP2 = dateP2.getFullYear();
+								var resDate2 = dayP2 + '.' + monthP2 + '.' + yearP2;
 
-							var dateP1 = new Date(d1);
-							if (dateP1 != 'Invalid Date') {
-								var monthP1 = '' + (dateP1.getMonth() + 1);
-								var dayP1 = '' + dateP1.getDate();
-								var yearP1 = dateP1.getFullYear();
-								var resDate1 = dayP1 + '.' + monthP1 + '.' + yearP1;
-							} else {
-								var dateP1 = new Date(yearP2 + '-' + monthP2 + '-' + parseInt(d1));
-								var monthP1 = '' + (dateP1.getMonth() + 1);
-								var dayP1 = '' + dateP1.getDate();
-								var yearP1 = dateP1.getFullYear();
-								var resDate1 = dayP1 + '.' + monthP1 + '.' + yearP1;
+								var dateP1 = new Date(d1);
+								if (dateP1 != 'Invalid Date') {
+									var monthP1 = '' + (dateP1.getMonth() + 1);
+									var dayP1 = '' + dateP1.getDate();
+									var yearP1 = dateP1.getFullYear();
+									var resDate1 = dayP1 + '.' + monthP1 + '.' + yearP1;
+								} else {
+									var dateP1 = new Date(yearP2 + '-' + monthP2 + '-' + parseInt(d1));
+									var monthP1 = '' + (dateP1.getMonth() + 1);
+									var dayP1 = '' + dateP1.getDate();
+									var yearP1 = dateP1.getFullYear();
+									var resDate1 = dayP1 + '.' + monthP1 + '.' + yearP1;
+								}
+								datesList.push(resDate1 + '-' + resDate2);
 							}
-							datesList.push(resDate1 + '-' + resDate2);
-						}
+					}
+
+					tagList2 = datesList.join('; ');
 				}
 
-				var tagList2 = datesList.join('; ');
 
 				var category1 = $("#hvrout2").clone().children().remove().end().text();
 				var category2 = $("#hvrout2 a").text();
@@ -419,15 +447,19 @@ exports.parserTime = async (link) => {
 		         day1 = '' + date1.getDate(),
 		         year1 = date1.getFullYear();
 
-				var date2 = new Date($('.lead:eq(0) span:eq(1)').attr('content')),
-				    month2 = '' + (date2.getMonth() + 1),
-				    day2 = '' + date2.getDate(),
-				    year2 = date2.getFullYear();
+				var date2T = '';
+				if ($('.lead:eq(0) span:eq(1)').length) {
+					var date2 = new Date($('.lead:eq(0) span:eq(1)').attr('content')),
+					    month2 = '' + (date2.getMonth() + 1),
+					    day2 = '' + date2.getDate(),
+					    year2 = date2.getFullYear();
+					date2T = day2 + '.' + (month2 < 10 ? '0' + month2 : month2) + '.' + year1;
+				}
 
 				return {
 					title: $('.page-wrapper h1').text(),
 					date1: day1 + '.' + (month1 < 10 ? '0' + month1 : month1) + '.' + year1,
-					date2: day2 + '.' + (month2 < 10 ? '0' + month2 : month1) + '.' + year1,
+					date2: date2T,
 					address: $('.lead:eq(1)').text(),
 					contact: emailT,
 					categories: category1 + '; ' + category2,
@@ -439,11 +471,11 @@ exports.parserTime = async (link) => {
 
 		browser.close();
 		return data;
-	} catch (e) {
-		console.log('error');
-		browser.close();
-		return null;
-	}
+	// } catch (e) {
+	// 	console.log('error');
+	// 	browser.close();
+	// 	return null;
+	// }
 }
 
 exports.parserTimes = async () => {
@@ -469,8 +501,8 @@ exports.parserTimes = async () => {
     });
 	}
 
-	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+	//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
 	const viewPort={width:1280, height:960}
