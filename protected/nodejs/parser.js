@@ -510,7 +510,7 @@ exports.parserTimes = async () => {
 
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
-
+console.log('brouser');
 	const page = await browser.newPage();
 	const viewPort={width:1280, height:960}
  	await page.setViewport(viewPort);
@@ -544,8 +544,9 @@ exports.parserTimes = async () => {
 
 		await page.waitFor(5000);
 	}
+	console.log('login');
 	await autoScroll(page);
-
+console.log('scrool');
 	const listA = await page.$$eval('.listing.text-muted tr.box h2 a', listA => listA.map((a) => {
 		let text = a.textContent;
 		return {title:text.trim(), link: a.getAttribute("href")};
