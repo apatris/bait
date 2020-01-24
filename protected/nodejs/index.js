@@ -30,7 +30,7 @@ cron.schedule('* * * * *', async function () {
 				if (firstPost && firstPost.link) {
 					let link = firstPost.link;
 					obj.splice(0, 1);
-
+					console.log('parse - ' + link);
 					fs.writeFile('test.txt', JSON.stringify(obj), function (err) { if (err) throw err; });
 
 					const postData = await parser.parserTime(link, account);
