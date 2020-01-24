@@ -35,6 +35,7 @@ cron.schedule('* * * * *', async function () {
 
 					const postData = await parser.parserTime(link, account);
 					if (postData) {
+						console.log('postData')
 						new objectsToCsv([postData]).toDisk('./tmp/resData.csv', { append: true, allColumns: true });
 					}
 				}
