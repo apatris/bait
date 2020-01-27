@@ -392,10 +392,27 @@ exports.parserTime = async (link, account) => {
 		await page.click('table.mng td a.x-ob-cd');
 		await page.waitFor(6000);
 
-		let eEmail = await page.$("#modalData table a");
+		let eEmail = await page.$('#modalData table div[class ^= block]');
 		let mEmailT = '';
 		if (eEmail) {
-			mEmailT = await page.evaluate(eEmail => eEmail.textContent, eEmail);
+			mEmailT = await page.evaluate(() => {
+				let ass = '';
+				$("#modalData table div[class ^= block]" ).each(function( index ) {
+						let assP = '';
+						let assPS = '';
+						let aStrong = $(this).find('strong');
+						if (aStrong.length) {
+
+							let fNSpan = $(this).find('small:first');
+							if (fNSpan.length && !fNSpan.find('a').length) {
+								assPS = fNSpan.text();
+							}
+							assP  = $(this).find('strong').text() + '-' + assPS;
+						}
+						ass	+= (ass ? ';' : '') + assP + '<' + $(this).find('a').text() + '>';
+				});
+				return ass;
+			});
 		}
 
 		let data = await page.evaluate((emailT) => {
