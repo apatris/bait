@@ -481,6 +481,7 @@ exports.parserTime = async (link, account) => {
 				}
 				let now = new Date();
 				return {
+					dateParse: now.getDate() + '.' + (now.getMonth() + 1) + '.' + now.getFullYear(),
 					title: $('.page-wrapper h1').text(),
 					date1: day1 + '.' + (month1 < 10 ? '0' + month1 : month1) + '.' + year1,
 					date2: date2T,
@@ -488,8 +489,7 @@ exports.parserTime = async (link, account) => {
 					contact: emailT,
 					categories: category1 + '; ' + category2,
 					frequency: frequency.trim(),
-					dates: tagList2.trim(),
-					dateParse: now.getDate() + '.' + (now.getMonth() + 1) + '.' + now.getFullYear(),
+					dates: tagList2.trim()
 				};
 		}, mEmailT);
 		console.log(data);
