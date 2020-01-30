@@ -30,13 +30,11 @@ cron.schedule('* * * * *', async function () {
 				if (firstPost && firstPost.link) {
 					let link = firstPost.link;
 					obj.splice(0, 1);
-					console.log('parse - ' + link);
 					fs.writeFile('test.txt', JSON.stringify(obj), function (err) { if (err) throw err; });
 
 					const postData = await parser.parserTime(link, account);
 					if (postData) {
-						console.log('postData')
-						new objectsToCsv([postData]).toDisk('./tmp/resData.csv', { append: true, allColumns: true });
+						new objectsToCsv([postData]).toDisk('./tmp/resData2.csv', { append: true, allColumns: true });
 					}
 				}
 			}
@@ -48,9 +46,9 @@ app.get('/run-parser-10-times', async function (req, res) {
 	//let account = {login:'glogr@me.com', pass:'7801'};
 	//const postData = await parser.parserTime('https://10times.com/bookfest-brisbane', account);
 
-	fs.writeFile('test.txt', '', function (err) { if (err) throw err; });
-	const postsList = await parser.parserTimes();
-	fs.writeFile('test.txt', JSON.stringify(postsList.data), function (err) { if (err) throw err; });
+	// fs.writeFile('test.txt', '', function (err) { if (err) throw err; });
+	// const postsList = await parser.parserTimes();
+	// fs.writeFile('test.txt', JSON.stringify(postsList.data), function (err) { if (err) throw err; });
 })
 
 app.get('/get-parse-data', function (req, res) {
