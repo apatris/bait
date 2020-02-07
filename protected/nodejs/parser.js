@@ -6,7 +6,7 @@ const path = require('path');
 exports.parseSantander = async (login, pass, flag) => {
 	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku %bankName%. Proszę sprawdzić.';
 	let urlRequest = 'https://e.apatris.pl/mod/api/request-sms?token=bank-token&flag=' + flag;
-
+	let balance = 0;
 	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
@@ -106,7 +106,11 @@ exports.parseSantander = async (login, pass, flag) => {
 	//#wylogowanie .error
 
 	await page.waitForResponse(response => response.status() === 200);
-	await page.waitFor(4000);
+	await page.waitFor(3000);
+
+	const accAmount = await page.$(".md-account-ammount-big");
+  balance = await page.evaluate(accAmount => accAmount.textContent.replace(/\s+/g,''), accAmount);
+	await page.waitFor(2000);
 
 	//link to page history
 	let bHistory = await page. $('#menu_multichannel_cbt_history');
@@ -144,7 +148,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	}
 
 	browser.close();
-	return {status:true, message:''};
+	return {status:true, message:'', balance : balance};
 }
 
 
