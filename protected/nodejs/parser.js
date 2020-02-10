@@ -111,6 +111,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	const accAmount = await page.$(".md-account-ammount-big");
   balance = await page.evaluate(accAmount => accAmount.textContent.replace(/\s+/g,''), accAmount);
 	await page.waitFor(2000);
+	console.log(balance);
 
 	//link to page history
 	let bHistory = await page. $('#menu_multichannel_cbt_history');
