@@ -100,7 +100,7 @@ exports.parseSantander = async (login, pass, flag) => {
 		}
 	} catch (e) {
 		browser.close();
-		return {status:true, message: messageError + ' Login Error'};
+		return {status:false, message: messageError + ' Login Error'};
 	}
 
 	//#wylogowanie .error
@@ -145,7 +145,7 @@ exports.parseSantander = async (login, pass, flag) => {
 		await page.waitFor(5000);
 	} catch (e) {
 		browser.close();
-		return {status:true, message: messageError + ' Parse Error'};
+		return {status:false, message: messageError + ' Parse Error'};
 	}
 
 	browser.close();
