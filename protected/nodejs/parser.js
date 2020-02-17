@@ -11,7 +11,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
-	// try {
+	try {
 		await page.goto('https://www.centrum24.pl/centrum24-web/login');
 		await page.waitFor(1000);
 
@@ -22,7 +22,7 @@ exports.parseSantander = async (login, pass, flag) => {
 		//login step1 end
 
 		await page.waitForResponse(response => response.status() === 200);
-		await page.waitFor(3000);
+		await page.waitFor(6000);
 
 		//login step2
 		let pasT = await page. $('.passwordTable');
@@ -98,10 +98,10 @@ exports.parseSantander = async (login, pass, flag) => {
 			await page.type('#input_nik.input_sms_code', code.replace('-', ''));
 			await page.click('[name=loginButton]');
 		}
-	// } catch (e) {
-	// 	browser.close();
-	// 	return {status:false, message: messageError + ' Login Error'};
-	// }
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Login Error'};
+	}
 
 	//#wylogowanie .error
 
