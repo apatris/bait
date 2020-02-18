@@ -7,8 +7,8 @@ exports.parseSantander = async (login, pass, flag) => {
 	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku %bankName%. Proszę sprawdzić.';
 	let urlRequest = 'https://e.apatris.pl/mod/api/request-sms?token=bank-token&flag=' + flag;
 	let balance = 0;
-	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+	//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
 	try {
@@ -23,7 +23,12 @@ exports.parseSantander = async (login, pass, flag) => {
 
 		await page.waitForResponse(response => response.status() === 200);
 		await page.waitFor(6000);
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Login Step 1 Error'};
+	}
 
+	try {
 		//login step2
 		let pasT = await page. $('.passwordTable');
 		if (pasT) {
@@ -42,7 +47,12 @@ exports.parseSantander = async (login, pass, flag) => {
 			await page.waitForSelector('#logowanie #ordinarypin');
 			await page.type('#logowanie #ordinarypin', pass);
 		}
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Login Step 2 Error'};
+	}
 
+	try {
 		//if chekbox remember
 		var checkRemamber = await page. $('input[type="checkbox"]');
 		if (checkRemamber) {
@@ -66,9 +76,13 @@ exports.parseSantander = async (login, pass, flag) => {
 		}
 		//if step3 end
 		await page.waitForResponse(response => response.status() === 200);
-
 		await page.waitFor(6000);
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Login checkbox Error'};
+	}
 
+	try {
 		let inputCode = await page. $('#input_nik.input_sms_code');
 		if (inputCode) {
 			var optionsP = {uri: urlRequest + '&type=1', headers: {'User-Agent': 'Request-Promise'}, json: true};
@@ -100,7 +114,7 @@ exports.parseSantander = async (login, pass, flag) => {
 		}
 	} catch (e) {
 		browser.close();
-		return {status:false, message: messageError + ' Login Error'};
+		return {status:false, message: messageError + ' Login sms Error'};
 	}
 
 	//#wylogowanie .error
