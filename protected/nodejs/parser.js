@@ -7,8 +7,8 @@ exports.parseSantander = async (login, pass, flag) => {
 	let messageError = 'Uwaga! Zarejestrowana nieudana próba parsowania banku %bankName%. Proszę sprawdzić.';
 	let urlRequest = 'https://e.apatris.pl/mod/api/request-sms?token=bank-token&flag=' + flag;
 	let balance = 0;
-	//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-	const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
 	try {
