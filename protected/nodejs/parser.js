@@ -14,7 +14,12 @@ exports.parseSantander = async (login, pass, flag) => {
 	try {
 		await page.goto('https://www.centrum24.pl/centrum24-web/login');
 		await page.waitFor(3000);
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Connection Error'};
+	}
 
+	try {
 		//login step1
 		await page.waitForSelector('#logowanie-inner-NIK #input_nik');
 		await page.type('#logowanie #input_nik', login);
@@ -140,7 +145,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	//link to page history end
 
 	await page.waitForResponse(response => response.status() === 200);
-	await page.waitFor(8000);
+	await page.waitFor(11000);
 
 	try {
 		await page.evaluate(() => {
