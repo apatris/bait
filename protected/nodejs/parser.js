@@ -11,7 +11,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
-
+	await page.setDefaultNavigationTimeout(0);
 	// try {
 		await page.goto('https://www.centrum24.pl/centrum24-web/login');
 		await page.waitFor(3000);
