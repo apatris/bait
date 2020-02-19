@@ -11,33 +11,16 @@ exports.parseSantander = async (login, pass, flag) => {
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 
 	const page = await browser.newPage();
-	await page.setDefaultNavigationTimeout(0);
-	// try {
-		await page.goto('https://www.centrum24.pl/centrum24-web/login', {
-		    waitUntil: 'load',
-		    // Remove the timeout
-		    timeout: 0
-		});
-		await page.waitFor(3000);
-	// } catch (e) {
-	// 	try {
-	// 		await page.goto('https://www.centrum24.pl/centrum24-web/login');
-	// 		await page.waitFor(3000);
-	// 	} catch (e) {
-	// 		browser = await puppeteer.launch({args: ['--no-sandbox'], userDataDir: './data/data_' + login});
-	// 		page = await browser.newPage();
-	//
-	// 		try {
-	// 			await page.goto('https://www.centrum24.pl/centrum24-web/login');
-	// 			await page.waitFor(3000);
-	// 		} catch (e) {
-	// 			browser.close();
-	// 			return {status:false, message: messageError + ' Connection Error'};
-	// 		}
-	// 	}
-	// }
 
-	// try {
+	try {
+		await page.goto('https://www.centrum24.pl/centrum24-web/login');
+		await page.waitFor(3000);
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Connection Error'};
+	}
+
+	try {
 		//login step1
 		await page.waitForSelector('#logowanie-inner-NIK #input_nik');
 		await page.type('#logowanie #input_nik', login);
@@ -46,12 +29,12 @@ exports.parseSantander = async (login, pass, flag) => {
 
 		await page.waitForResponse(response => response.status() === 200);
 		await page.waitFor(6000);
-	// } catch (e) {
-	// 	browser.close();
-	// 	return {status:false, message: messageError + ' Login Step 1 Error'};
-	// }
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Login Step 1 Error'};
+	}
 
-	// try {
+	try {
 		//login step2
 		let pasT = await page. $('.passwordTable');
 		if (pasT) {
@@ -70,12 +53,12 @@ exports.parseSantander = async (login, pass, flag) => {
 			await page.waitForSelector('#logowanie #ordinarypin');
 			await page.type('#logowanie #ordinarypin', pass);
 		}
-	// } catch (e) {
-	// 	browser.close();
-	// 	return {status:false, message: messageError + ' Login Step 2 Error'};
-	// }
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Login Step 2 Error'};
+	}
 
-	// try {
+	try {
 		//if chekbox remember
 		var checkRemamber = await page. $('input[type="checkbox"]');
 		if (checkRemamber) {
@@ -100,12 +83,12 @@ exports.parseSantander = async (login, pass, flag) => {
 		//if step3 end
 		await page.waitForResponse(response => response.status() === 200);
 		await page.waitFor(6000);
-	// } catch (e) {
-	// 	browser.close();
-	// 	return {status:false, message: messageError + ' Login checkbox Error'};
-	// }
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Login checkbox Error'};
+	}
 
-	// try {
+	try {
 		let inputCode = await page. $('#input_nik.input_sms_code');
 		if (inputCode) {
 			var optionsP = {uri: urlRequest + '&type=1', headers: {'User-Agent': 'Request-Promise'}, json: true};
@@ -135,10 +118,10 @@ exports.parseSantander = async (login, pass, flag) => {
 			await page.type('#input_nik.input_sms_code', code.replace('-', ''));
 			await page.click('[name=loginButton]');
 		}
-	// } catch (e) {
-	// 	browser.close();
-	// 	return {status:false, message: messageError + ' Login sms Error'};
-	// }
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Login sms Error'};
+	}
 
 	//#wylogowanie .error
 
@@ -165,7 +148,7 @@ exports.parseSantander = async (login, pass, flag) => {
 	await page.waitForResponse(response => response.status() === 200);
 	await page.waitFor(11000);
 
-	// try {
+	try {
 		await page.evaluate(() => {
 			$('#presetDateSelect').find('input[value="LAST_30_DAYS"]').click();
 		});
@@ -180,10 +163,10 @@ exports.parseSantander = async (login, pass, flag) => {
 		await page.click('#btn-csv');
 		await page.click('.btn-csv-download');
 		await page.waitFor(5000);
-	// } catch (e) {
-	// 	browser.close();
-	// 	return {status:false, message: messageError + ' Parse Error'};
-	// }
+	} catch (e) {
+		browser.close();
+		return {status:false, message: messageError + ' Parse Error'};
+	}
 
 	browser.close();
 	return {status:true, message:'', balance : balance};
