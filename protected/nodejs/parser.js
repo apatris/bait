@@ -17,7 +17,7 @@ exports.parseSantander = async (login, pass, flag) => {
 		await page.waitFor(3000);
 	} catch (e) {
 		browser.close();
-		return {status:false, message: messageError + ' Connection Error'};
+		return {status:true, message:''};
 	}
 
 	try {
