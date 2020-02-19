@@ -15,8 +15,21 @@ exports.parseSantander = async (login, pass, flag) => {
 		await page.goto('https://www.centrum24.pl/centrum24-web/login');
 		await page.waitFor(3000);
 	} catch (e) {
-		browser.close();
-		return {status:false, message: messageError + ' Connection Error'};
+		try {
+			await page.goto('https://www.centrum24.pl/centrum24-web/login');
+			await page.waitFor(3000);
+		} catch (e) {
+			browser = await puppeteer.launch({args: ['--no-sandbox'], userDataDir: './data/data_' + login});
+			page = await browser.newPage();
+
+			try {
+				await page.goto('https://www.centrum24.pl/centrum24-web/login');
+				await page.waitFor(3000);
+			} catch (e) {
+				browser.close();
+				return {status:false, message: messageError + ' Connection Error'};
+			}
+		}
 	}
 
 	try {
