@@ -13,7 +13,11 @@ exports.parseSantander = async (login, pass, flag) => {
 	const page = await browser.newPage();
 	await page.setDefaultNavigationTimeout(0);
 	// try {
-		await page.goto('https://www.centrum24.pl/centrum24-web/login');
+		await page.goto('https://www.centrum24.pl/centrum24-web/login', {
+		    waitUntil: 'load',
+		    // Remove the timeout
+		    timeout: 0
+		});
 		await page.waitFor(3000);
 	// } catch (e) {
 	// 	try {
