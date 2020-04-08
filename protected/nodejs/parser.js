@@ -535,7 +535,7 @@ exports.parserTime = async (link, account) => {
 exports.parserTimes = async () => {
 	let login = 'glogr@me.com';
 	let pass = '7801';
-console.log(pass);
+
 	async function autoScroll(page) {
     await page.evaluate(async () => {
         await new Promise((resolve, reject) => {
@@ -555,36 +555,15 @@ console.log(pass);
     });
 	}
 
-	//const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
-
-
-	try {
-		var browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
-		const page = await browser.newPage();
-		const viewPort={width:1280, height:960}
-	 	await page.setViewport(viewPort);
-
-		await page.goto('https://10times.com/events');
-		await page.waitFor(2000);
-	} catch (e) {
-		try {
-			var browser = await puppeteer.launch({args: ['--no-sandbox'], userDataDir: './data/data_' + login});
-			const page = await browser.newPage();
-			const viewPort={width:1280, height:960}
-		 	await page.setViewport(viewPort);
-
-			await page.goto('https://10times.com/events');
-			await page.waitFor(2000);
-		} catch (e) {
-			browser.close();
-			return {status:false, message:'Parse'};
-		}
-	}
-
-
 console.log('brouser');
+	const page = await browser.newPage();
+	const viewPort={width:1280, height:960}
+ 	await page.setViewport(viewPort);
 
+	await page.goto('https://10times.com/events');
+	await page.waitFor(2000);
 
 	await page.waitForSelector('.btn[data-id=today]');
 	await page.click('.btn[data-id=today]');
