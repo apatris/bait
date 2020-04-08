@@ -48,8 +48,9 @@ cron.schedule('* * * * *', async function () {
 app.get('/run-parser-10-times', async function (req, res) {
 	//let account = {login:'glogr@me.com', pass:'7801'};
 	//const postData = await parser.parserTime('https://10times.com/bookfest-brisbane', account);
-
+console.log('===========')
 	 fs.writeFile('test.txt', '', function (err) { if (err) throw err; });
+	 console.log('===========')
 	 const postsList = await parser.parserTimes();
 	 fs.writeFile('test.txt', JSON.stringify(postsList.data), function (err) { if (err) throw err; });
 })
