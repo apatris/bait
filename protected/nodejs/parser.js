@@ -555,7 +555,8 @@ exports.parserTimes = async () => {
     });
 	}
 
-	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+//	const browser = await puppeteer.launch({args: ['--no-sandbox', '--proxy-server=socks5://172.104.135.13:9050'], userDataDir: './data/data_' + login});
+	const browser = await puppeteer.launch({args: ['--no-sandbox'], userDataDir: './data/data_' + login});
 	//const browser = await puppeteer.launch({ headless: false, userDataDir: './data/data_' + login});
 console.log('brouser');
 	const page = await browser.newPage();
@@ -564,13 +565,14 @@ console.log('brouser');
 
 	await page.goto('https://10times.com/events');
 	await page.waitFor(2000);
+console.log('go to+ ');
 
 	await page.waitForSelector('.btn[data-id=today]');
 	await page.click('.btn[data-id=today]');
 
 	await page.waitForResponse(response => response.status() === 200);
 	await page.waitFor(5000);
-
+console.log('reponse + ');
 	let inputCode = await page. $('#loginHide.x-thm');
 	if (inputCode) {
 		await page.click('#loginHide.x-thm');
